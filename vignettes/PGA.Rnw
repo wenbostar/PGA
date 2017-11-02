@@ -1,0 +1,273 @@
+%\VignetteEngine{knitr}
+%\VignetteIndexEntry{PGA tutorial}
+%\VignetteKeywords{Proteomics, Proteogenomics, RNA-Seq,LC/MSMS,Protein identification}
+%\VignettePackage{PGA}
+
+\documentclass[12pt]{article}
+
+<<style, eval=TRUE, echo=FALSE, results='asis'>>=
+BiocStyle::latex()
+@
+
+
+\bioctitle[\Biocpkg{PGA} introduction]{A short tutorial on using \Biocpkg{PGA} for protein identification based on the database derived from RNA-Seq data}
+
+
+\author{Bo Wen}
+
+\begin{document}
+
+\maketitle
+
+\newpage
+
+\tableofcontents
+
+<<env, echo=FALSE,warning=FALSE,message=FALSE>>=
+suppressPackageStartupMessages(library("PGA"))
+#suppressPackageStartupMessages(library("R.utils"))
+@
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Section
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%------------------------------------------------------------------
+\section{Introduction}\label{sec:intro} 
+%------------------------------------------------------------------
+
+The data of mass spectrometry (MS)-based proteomics is generally achieved by peptide identification through comparison of the experimental mass spectra with the theoretical mass spectra that are derived from a reference protein database, however, this strategy could not identify new peptide and protein sequences that are absent from a reference database. The customized protein databases on the basis of RNA-Seq data was proposed to assist and improve identification of such novel peptides. In addition, the strategy based on searching this database can improve the sensitivity of the peptide identification. The \Biocpkg{PGA} package provides functions for construction of customized protein databases based on RNA-Seq data, database searching, post-processing and report generation. This kind of customized protein database includes both the reference database (such as Refseq or ENSEMBL) and the novel peptide sequences form RNA-Seq data. In general, customized protein database includes the following four kind of new peptides (or proteins):1) Single nucleotide variation (SNV) caused peptides; 2) Short insertion and deletion (INDEL) caused peptides; 3) Alternative splicing caused peptides; 4) Novel transcripts codeing peptides. In addition, \Biocpkg{PGA} can also be used to create proteomic database based on the transcript sequences from the de novo assembly of RNA-Seq data. This strategy of proteomic database construction is very useful in proteomic study for non-model organism. This document describes how to use the functions included in the R package \Biocpkg{PGA}.
+
+
+%------------------------------------------------------------------
+\section{Construction of customized protein databases based on RNA-Seq data}
+%------------------------------------------------------------------
+
+\subsection{Based on the result from analysis of RNA-Seq data with a reference genome}
+
+\subsubsection{Preparing annotation files}
+
+In order to translate the RNA-Seq information to peptide sequences, the users need to download numerous pieces of genome annotation information. There are two functions in \Biocpkg{PGA} to prepare these information: \Rfunction{PrepareAnnotationRefseq2} and \Rfunction{PrepareAnnotationEnsembl2}. The methods  are similar with functions \Rfunction{PrepareAnnotationRefseq} and \Rfunction{PrepareAnnotationEnsembl} in \Biocpkg{customProDB} \cite{wang2013customprodb} with several changes. However, the usage of these functions are the same with those in \Biocpkg{customProDB}. 
+
+
+\subsubsection{Building database from RNA-Seq data}
+Building a comprehensive customized protein databases based on RNA-Seq data by using \Rpackage{PGA}, the users usually need to provide three files:
+\begin{enumerate}
+    \item a VCF format file which contains SNV or INDEL information;
+    \item a BED format file which contains splice junctions information;
+    \item a GTF format file which contains novel transcripts information.
+\end{enumerate}
+The above files provide almost all of the events which generate potential novel peptides from RNA-Seq data.
+
+<<bdb, eval=TRUE, warning=FALSE, message=FALSE, cache=TRUE>>=
+vcffile <- system.file("extdata/input", "PGA.vcf",package="PGA")
+bedfile <- system.file("extdata/input", "junctions.bed",package="PGA")
+gtffile <- system.file("extdata/input", "transcripts.gtf",package="PGA")
+annotation <- system.file("extdata", "annotation",package="PGA")
+outfile_path<-"db/"
+outfile_name<-"test"
+library(BSgenome.Hsapiens.UCSC.hg19)
+dbfile <- dbCreator(gtfFile=gtffile,vcfFile=vcffile,bedFile=bedfile,
+                    annotation_path=annotation,outfile_name=outfile_name,
+                    genome=Hsapiens,outdir=outfile_path)
+@
+For each kind of event mentioned above, two files are generated. One is a FASTA format file and the other is a file with a .tab suffix. The latter contains the detailed information about novel peptides . Except these files, a combined FASTA format file is generated. This is the final customized protein database which will be used for database searching. If the parameter \textbf{"make\_decoy"} in \Rfunction{dbCreator} function is set \textbf{"TRUE"} (This is the default value for parameter \textbf{"make\_decoy"}), this file will contain the decoy sequences. 
+
+
+\subsection{Based on the result from de novo assembly of RNA-Seq data without a reference genome}
+
+The proteomic studies typically depend on the availability of sequenced genomes. For proteomic study of nonmodel organism, it's usually limited by the absence of protein sequence data. Currently in this case, protein sequence databases can be generated from the analysis of RNA-Seq data by a genome-independent (de novo) strategy. At present, several software can be used to perform de novo assembly of RNA-seq data, such as Trinity \cite{grabherr2011full}, Oases \cite{schulz2012oases} and SOAPdenovo-Trans \cite{xie2014soapdenovo}. There is a Nature protocol about how to use \textbf{Trinity} to perform de novo assembly of RNA-seq data \cite{haas2013novo}. In general, the de novo assembly sofware output a FASTA format file (click this link \href{https://github.com/trinityrnaseq/trinityrnaseq/wiki/Output-of-Trinity-Assembly}{"Output of Trinity Assembly"}  to see the output of \textbf{Trinity}) which contains the transcript sequences. 
+
+In \Biocpkg{PGA}, the function \Rfunction{createProDB4DenovoRNASeq} can be used to create a proteomic database based on the FASTA format file which is derived from the de novo assembly sofware, such as \textbf{Trinity}. It does not need any annotation files refered in above section.
+
+<<denovo, echo=TRUE, cache=FALSE, tidy=FALSE,eval=TRUE, warning=FALSE>>=
+transcript_seq_file <- system.file("extdata/input", "Trinity.fasta",
+                                   package="PGA")
+outdb <- createProDB4DenovoRNASeq(infa=transcript_seq_file,
+                                  outfile_name = "denovo")
+cat(outdb,"\n")
+@
+
+%------------------------------------------------------------------
+\section{MS/MS data searching}
+%------------------------------------------------------------------
+
+After the customized protein database constructed, \Biocpkg{rTANDEM} package \cite{rTANDEM} is adopted to search the database against tandem mass spectra to detect peptides. \Biocpkg{rTANDEM} package interfaces with the popular used open source search engine \software{X!Tandem} \cite{tandem} algorithm in R.
+
+<<databasesearching, echo=TRUE, cache=TRUE, tidy=FALSE,eval=TRUE,warning=FALSE>>=
+msfile <- system.file("extdata/input", "pga.mgf",package="PGA")
+idfile <- runTandem(spectra = msfile, fasta = dbfile, outdir = "./", cpu = 6,
+                    enzyme = "[KR]|[X]", varmod = "15.994915@M",itol = 0.05,
+                    fixmod = "57.021464@C", tol = 10, tolu = "ppm",
+                    itolu = "Daltons", miss = 2, maxCharge = 8, ti = FALSE)
+
+@
+
+The results are written in xml format to the directory specified and will be loaded for further processing.
+
+
+Alternatively, Alternatively, search result with dat format from MASCOT \cite{cottrell1999probability} or mzIdentML \cite{jones2012mzidentml} format from MS-GF+ \cite{kim2014ms}, MyriMatch \cite{tabb2007myrimatch}, OMSSA \cite{geer2004open} (converting OMSSA result to mzIdentML by mzidLibrary \cite{ghali2013tools}) and IPeak \cite{wen2015ipeak}, was also accepted by \Biocpkg{PGA}.
+
+
+%------------------------------------------------------------------
+\section{Post-processing}
+%------------------------------------------------------------------
+
+After the MS/MS data searching, the function \Rfunction{parserGear} can be used to parse the search result. It calculates the q-value for each peptide spectrum matches (PSMs) and then utilizes the Occam's razor approach \cite{Nesvizhskii2003} to deal with degenerated wild peptides by finding a minimum subset of proteins that covered all of the identified wild peptides. 
+
+<<parserGear, echo=TRUE, cache=TRUE, tidy=FALSE, eval=TRUE, warning=FALSE, message=FALSE>>=
+parserGear(file = idfile, db = dbfile, decoyPrefix="#REV#",xmx=1,thread=8,
+           outdir = "parser_outdir")
+@
+
+It exports some tab-delimited files containing the peptide identification 
+result and protein identification result. The annotated spectra for 
+the identified novel peptides which pass the threshold are exported.
+
+This function also accepts the "raw" MASCOT \cite{cottrell1999probability} result (dat format) or mzIdentML \cite{jones2012mzidentml} format file from MS-GF+ \cite{kim2014ms}, MyriMatch \cite{tabb2007myrimatch}, OMSSA \cite{geer2004open} (converting OMSSA result to mzIdentML by mzidLibrary \cite{ghali2013tools}) and IPeak \cite{wen2015ipeak}. For instance,
+<<mascotParser, eval=TRUE, echo=TRUE, cache=TRUE, tidy=FALSE, warning=FALSE, message=FALSE>>=
+dat_file <- system.file("extdata/input", "mascot.dat",package="PGA")
+parserGear(file = dat_file, db = dbfile, decoyPrefix="#REV#",xmx=1,thread=8,
+           outdir = "parser_outdir_mascot")
+@
+ 
+Unfortunately,we don't offer the wrapper function for Mascot 
+search under current conditions. So you have to launch the independent
+identification by Mascot. For how to export dat format file from MASCOT search, please click this link \href{http://www.matrixscience.com/help/export_help.html}{"Export search results"} to see the instruction.
+
+If a user wants to take mzIdentML file as input, a java parser from the \href{https://raw.githubusercontent.com/wenbostar/PGA/gh-pages/download/parser4PGA.jar}{github} must be downloaded and replaces the java parser in PGA package with the same name. Then use the function \Rfunction{parserGear} as below:
+<<parsermzid, eval=FALSE, echo=TRUE, cache=TRUE, tidy=FALSE, warning=FALSE, message=FALSE>>=
+## The following code works only after the java parser has been updated. 
+vcffile <- system.file("extdata/input", "PGA.vcf",package="PGA")
+bedfile <- system.file("extdata/input", "junctions.bed",package="PGA")
+gtffile <- system.file("extdata/input", "transcripts.gtf",package="PGA")
+annotation <- system.file("extdata", "annotation",package="PGA")
+outfile_path<-"db/"
+outfile_name<-"test"
+library(BSgenome.Hsapiens.UCSC.hg19)
+dbfile <- dbCreator(gtfFile=gtffile,vcfFile=vcffile,bedFile=bedfile,
+                    annotation_path=annotation,outfile_name=outfile_name,
+                    genome=Hsapiens,outdir=outfile_path)
+          
+msfile <- system.file("extdata/input", "pga.mgf",package="PGA")
+
+## MS-GF+ (mzIdentML) as the peptide identification software
+mzid <- system.file("extdata/input", "msgfplus.mzid",package="PGA")
+parserGear(file = mzid, db = dbfile, msfile = msfile, 
+           decoyPrefix="#REV#",xmx=1,thread=8,
+           outdir = "parser_outdir")
+@
+
+
+
+
+%------------------------------------------------------------------
+\section{HTML-based report generation}
+%------------------------------------------------------------------
+
+The results are then summarised and compiled into an interactive HTML report.
+
+<<reportg, echo=TRUE, cache=TRUE, tidy=FALSE, eval=TRUE, warning=FALSE, message=FALSE>>=
+reportGear(parser_dir = "parser_outdir", tab_dir = outfile_path,
+           report_dir = "report")
+@
+
+After the analysis has completed, the file \file{index.html} in the output directory can be opened in a web browser to access report generated. In general, this report will show the identification result for four kinds of novel peptides, such as SNV-caused peptides, INDEL-caused peptides, alternative splicing caused peptides and novel transcripts codeing peptides.
+
+If the RefSeq annotation is used in the RNA-Seq data analysis, the report will show the gene name for each protein. However, if the Ensembl annotation is used in the RNA-Seq data analysis, a user can use the function \Rfunction{addGeneName4Ensembl} to add the gene name information into the report as below:
+
+<<addGeneName4Ensembl,echo=TRUE, cache=TRUE, tidy=FALSE, eval=FALSE, warning=FALSE, message=FALSE>>=
+
+## Don't run. It only works if you have generated a 
+## report with using Ensembl annotation.
+mart <- biomaRt::useMart("ENSEMBL_MART_ENSEMBL",
+        dataset="hsapiens_gene_ensembl",
+        host="grch37.ensembl.org", 
+        path="/biomart/martservice",
+        archive=FALSE)
+
+addGeneName4Ensembl(mart=mart,report="report")
+@
+
+
+%------------------------------------------------------------------
+\section{Integrated function \Rfunction{easyRun}}
+%------------------------------------------------------------------
+
+The function \Rfunction{easyRun} automates the data analysis process. 
+It will process the dataset in the following way:
+
+\begin{enumerate}
+\item Customized protein database construction
+\item MS/MS searching
+\item Post-processing
+\item HTML-based report generation
+\end{enumerate}
+
+This function can be called as following:
+<<auto, echo=TRUE, cache=TRUE, tidy=FALSE, eval=TRUE, warning=FALSE, message=FALSE>>=
+vcffile <- system.file("extdata/input", "PGA.vcf",package="PGA")
+bedfile <- system.file("extdata/input", "junctions.bed",package="PGA")
+gtffile <- system.file("extdata/input", "transcripts.gtf",package="PGA")
+annotation <- system.file("extdata", "annotation",package="PGA")
+library(BSgenome.Hsapiens.UCSC.hg19)
+msfile <- system.file("extdata/input", "pga.mgf",package="PGA")
+easyRun(gtfFile=gtffile,vcfFile=vcffile,bedFile=bedfile,spectra=msfile,
+        annotation_path=annotation,genome=Hsapiens,cpu = 6,
+        enzyme = "[KR]|[X]", varmod = "15.994915@M",itol = 0.05,
+        fixmod = "57.021464@C", tol = 10, tolu = "ppm", itolu = "Daltons",
+        miss = 2, maxCharge = 8, ti = FALSE,xmx=1)
+@
+After the analysis has completed, the file \file{index.html} in the output directory can be opened in a web browser to access report generated.
+
+
+\section{FAQ}
+
+\subsection{How to export dat format file for MASCOT search?}
+
+\href{http://www.matrixscience.com/}{MASCOT} is a widely used commercial software for protein identification based on MS/MS data. For how to export dat format file from MASCOT search, please click this link \href{http://www.matrixscience.com/help/export_help.html}{"Export search results"} to see the instruction.
+
+\subsection{How to convert OMSSA result file to mzIdentML file?}
+
+\textbf{OMSSA} is a free software for protein identification based on MS/MS data. The user can use the \href{http://compomics.github.io/projects/searchgui.html}{SearchGUI} \cite{vaudel2011searchgui} to do the OMSSA search. The result file (.omx) of OMSSA can be converted to mzIdentML by mzidLibrary \cite{ghali2013tools}. Please see the \href{https://github.com/fghali/mzidlib/tree/master/documentation}{user's manual of mzidLibrary} for how to do this.
+
+
+\subsection{How to do the MS/MS searching in parallel (multi-threading)?}
+
+In \Biocpkg{PGA}, the MS/MS searching can be performed in parallel (multi-threading) if the user use the default search software \textbf{X!Tandem}. The parameter \textbf{"cpu"} in function \Rfunction{runTandem} is used to control the number of CPU used for MS/MS searching.
+
+
+\subsection{How does PGA work in respective to RNA-Seq data generated by different NGS technologies?}
+
+As \Biocpkg{PGA} takes .bed, .vcf, .gtf and FASTA format files as input for construction of customized proteomic database, it should be compatible with the RNA-Seq data produced by different NGS technologies (eg Illumina, IonTorrent, Pacific Bioscience, ...) as these file formats are standard formats used in NGS data analysis.
+
+
+\subsection{What system requirements are recommended for PGA?}
+
+Intel Core processor (8 CPU), 48 GB RAM, 500 GB disk and 64-bit Windows 7.
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Section
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section*{Session information}\label{sec:sessionInfo} 
+
+All software and respective versions used to produce this document are listed below.
+
+
+
+
+
+<<sessioninfo, results='asis', echo=FALSE>>=
+toLatex(sessionInfo())
+@
+
+\bibliography{PGA}
+
+\end{document}

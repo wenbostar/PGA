@@ -1,0 +1,48 @@
+importFrom(data.table,"%between%", "%chin%", "%like%", ":=",  as.data.table, between, chgroup, chmatch, chorder, CJ, copy, data.table, dcast, dcast.data.table, foverlaps,fread, haskey, key, "key<-", key2, last, like,melt, set, set2key, set2keyv, setattr, setDF, setDT, setkey, setkeyv, setnames,  setorder, setorderv)
+importFrom("grDevices", "colorRampPalette", "dev.off", "pdf", "png",
+             "rainbow")
+importFrom("graphics", "abline", "axTicks", "axis", "barplot", "box",
+             "clip", "hist", "lines", "mtext", "par", "pie", "plot",
+             "points", "rug", "text")
+importFrom("stats", "density", "rt", "setNames")
+importFrom("utils", "read.delim", "read.table", "write.table")
+import(pheatmap)
+import(RCurl)
+import(Nozzle.R1)
+import(stringr)
+import(ggplot2)
+import(S4Vectors)
+import(IRanges)
+import(GenomicRanges)
+importFrom(Biostrings,
+    AAStringSet, DNAStringSet, DNAStringSetList, DNA_BASES, getSeq ,
+    nchar, reverseComplement, substr, translate)
+import(Rsamtools)
+importFrom(GenomicFeatures,exonsBy,makeTxDbFromGFF,extractTranscriptSeqs)
+import(RSQLite)
+importFrom(rtracklayer,browserSession, ucscTableQuery,
+                    tableNames, getTable, trackNames, ucscSchema,import,export)
+importFrom(biomaRt, getBM, listAttributes, listDatasets, listMarts,
+           useDataset, useMart)
+
+importFrom(GenomicFeatures, cdsBy, exons, transcripts,makeTxDbFromUCSC,
+    fiveUTRsByTranscript, threeUTRsByTranscript)
+
+importFrom(VariantAnnotation, scanVcf, scanVcfHeader, samples)
+importFrom(AnnotationDbi, loadDb, saveDb)
+importFrom(customProDB,aaVariation,Bed2Range,InputVcf,JunctionType,
+           OutputNovelJun,Outputproseq,OutputVarproseq,
+           OutputVarproseq_single,Positionincoding,
+           PrepareAnnotationEnsembl,Varlocation)
+importFrom(rTANDEM, rTParam, rTTaxo, setParamValue, tandem)
+
+
+export(dbCreator)
+export(reportGear)
+export(runTandem)
+export(parserGear)
+export(easyRun)
+export(PrepareAnnotationEnsembl2)
+export(PrepareAnnotationRefseq2)
+export(createProDB4DenovoRNASeq)
+export(addGeneName4Ensembl)

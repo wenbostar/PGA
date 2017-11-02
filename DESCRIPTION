@@ -1,0 +1,28 @@
+Package: PGA
+Type: Package
+Title: An package for identification of novel peptides by customized
+        database derived from RNA-Seq
+Description: This package provides functions for construction of customized
+    protein databases based on RNA-Seq data with/without genome guided, database
+    searching, post-processing and report generation. This kind of customized
+    protein database includes both the reference database (such as Refseq or
+    ENSEMBL) and the novel peptide sequences form RNA-Seq data.
+Version: 1.9.1
+Date: 2017-06-26
+Author: Shaohang Xu, Bo Wen
+Maintainer: Bo Wen <wenbostar@gmail.com>, Shaohang Xu <xsh.skye@gmail.com>
+Depends: R (>= 3.0.1), IRanges, GenomicRanges, Biostrings (>= 2.26.3),
+        data.table, rTANDEM
+Imports: S4Vectors (>= 0.9.25), Rsamtools (>= 1.10.2), GenomicFeatures
+        (>= 1.19.8), biomaRt (>= 2.17.1), stringr, RCurl, Nozzle.R1,
+        VariantAnnotation (>= 1.7.28), rtracklayer, RSQLite, ggplot2,
+        AnnotationDbi, customProDB (>= 1.7.0), pheatmap
+Suggests: BSgenome.Hsapiens.UCSC.hg19, RUnit, BiocGenerics, BiocStyle,
+        knitr, R.utils
+VignetteBuilder: knitr
+License: GPL-2
+biocViews: Proteomics, MassSpectrometry, Software, ReportWriting,
+        RNASeq, Sequencing
+RoxygenNote: 5.0.1
+NeedsCompilation: no
+Packaged: 2017-10-31 00:02:07 UTC; biocbuild

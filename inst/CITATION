@@ -1,0 +1,21 @@
+citHeader("To cite the PGA package in publications use:")
+
+citEntry(entry="article",  
+         title  = "PGA: an R/Bioconductor package for identification of novel peptides using a customized database derived from RNA-Seq",
+         author = personList(
+           person(given="Bo", family="Wen"),
+           person(given="Shaohang", family="Xu"),
+           person(given="Ruo", family="Zhou"),
+           person(given="Bing", family="Zhang"),
+           person(given="Xiaojing", family="Wang"),
+           person(given="Xin", family="Liu"),
+           person(given="Xun", family="Xu"),
+           person(given="Siqi", family="Liu")),
+         journal = "BMC bioinformatics",
+         year = "2016",
+         volume = "17",
+         pages = "1",
+         doi = "10.1186/s12859-016-1133-3",
+         url = "http://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-016-1133-3",   
+         textVersion = "Bo Wen, Shaohang Xu, et al. \"PGA: an R/Bioconductor package for identification of novel peptides using a customized database derived from RNA-Seq.\" BMC bioinformatics 17.1 (2016): 1."
+         )
