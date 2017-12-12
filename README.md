@@ -6,6 +6,12 @@
 # `PGA`
 *[PGA](http://bioconductor.org/packages/PGA)* is an R package for identification of novel peptides by customized database derived from RNA-Seq or DNA-Seq data. This package provides functions for construction of customized protein databases based on RNA-Seq data with/without genome guided or DNA-Seq data, database searching, post-processing and report generation. This kind of customized protein database includes both the reference database (such as Refseq or ENSEMBL) and the novel peptide sequences form RNA-Seq data or DNA-Seq data.
 
+## Usage
+
+Please read this document to find how to use PGA: [PGA tutorial](http://bioconductor.org/packages/devel/bioc/vignettes/PGA/inst/doc/PGA.pdf). If you have any questions about PGA, please open an issue here: [open an issue](https://github.com/wenbostar/PGA/issues).
+
+Demo report of PGA output: [Demo report](http://wenbostar.github.io/PGA/report/index.html).
+
 ## Installation
 
 To install *[PGA](http://bioconductor.org/packages/PGA)*
