@@ -32,6 +32,7 @@ biocLite("wenbostar/PGA")
 To cite the `PGA` package in publications, please use:
 
 > Wen B, Xu S, Zhou R, et al. PGA: an R/Bioconductor package for identification of novel peptides using a customized database derived from RNA-Seq. BMC bioinformatics, 2016, 17(1): 244. *[DOI: 10.1186/s12859-016-1133-3](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-016-1133-3)*
+
 > Wen, B., Xu, S., Sheynkman, G.M., Feng, Q., Lin, L., Wang, Q., Xu, X., Wang, J. and Liu, S., 2014. sapFinder: an R/Bioconductor package for detection of variant peptides in shotgun proteomics experiments. Bioinformatics, 30(21), pp.3136-3138. *[DOI: 10.1093/bioinformatics/btu397](https://academic.oup.com/bioinformatics/article/30/21/3136/2422150)*
 
 ## List of citations
