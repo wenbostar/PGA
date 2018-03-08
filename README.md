@@ -1,6 +1,7 @@
 [![Build Status](https://travis-ci.org/wenbostar/PGA.svg?branch=master)](https://travis-ci.org/wenbostar/PGA) 
 [![Bioconductor release build Status](http://bioconductor.org/shields/build/release/bioc/PGA.svg)](http://bioconductor.org/packages/release/bioc/html/PGA.html) 
 [![Bioconductor devel build Status](http://bioconductor.org/shields/build/devel/bioc/PGA.svg)](http://bioconductor.org/packages/devel/bioc/html/PGA.html) 
+![Github Releases](https://img.shields.io/github/downloads/wenbostar/PGA/latest/total.svg)
 
 
 # `PGA`: a tool for ProteoGenomics Analysis
