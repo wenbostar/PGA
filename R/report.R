@@ -694,8 +694,8 @@ reportSNV <- function(parser_dir,tab_dir,report_dir="./"){
     
     dt<-fread(pepsummary_path,header=TRUE)
     setnames(dt,"index","Query") 
-    dt_var<-subset(dt,isSAP=="true")
-    dt_con<-subset(dt,isSAP=="false") 
+    dt_var<-subset(dt,isSAP==TRUE)
+    dt_con<-subset(dt,isSAP==FALSE) 
     
     dt_tab<-read.delim(tab_path,header=TRUE,stringsAsFactors=FALSE)
     setDT(dt_tab)
