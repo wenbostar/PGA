@@ -41,7 +41,7 @@ To cite the `PGA` package in publications, please use:
 
 ## List of citations
 
-`PGA` has been cited in the following manuscripts:
+`PGA`/`sapFinder` has been cited in the following manuscripts:
 1. Ignatchenko, Alexandr, et al. "Detecting protein variants by mass spectrometry: a comprehensive study in cancer cell-lines." Genome medicine 9.1 (2017): 62.
 2. Luan, Ning, et al. "A combinational strategy upon RNA sequencing and peptidomics unravels a set of novel toxin peptides in scorpion Mesobuthus martensii." Toxins 8.10 (2016): 286.
 3. Ma, Chunwei, et al. "Improvement of peptide identification with considering the abundance of mRNA and peptide." BMC bioinformatics 18.1 (2017): 109.
@@ -49,6 +49,8 @@ To cite the `PGA` package in publications, please use:
 5. Proffitt, J. Michael, et al. "Proteomics in non-human primates: utilizing RNA-Seq data to improve protein identification by mass spectrometry in vervet monkeys." BMC genomics 18.1 (2017): 877.
 6. Dimitrakopoulos, Lampros, et al. "Onco-proteogenomics: Multi-omics level data integration for accurate phenotype prediction." Critical reviews in clinical laboratory sciences 54.6 (2017): 414-432.
 7. Ruggles, Kelly V., et al. "Methods, tools and current perspectives in proteogenomics." Molecular & Cellular Proteomics 16.6 (2017): 959-981.
+8. Peng, Xinxin, et al. "A-to-I RNA editing contributes to proteomic diversity in cancer." Cancer cell 33.5 (2018): 817-828.
+9. Zhang, Minying, et al. "RNA editing derived epitopes function as cancer antigens to elicit immune responses." Nature communications 9.1 (2018): 3919.
 ## Contribution
 
 Contributions to the package are more than welcome. 
