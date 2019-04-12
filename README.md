@@ -22,14 +22,21 @@ To install *[PGA](http://bioconductor.org/packages/PGA)*
 
 
 ```{r install, eval = FALSE}
-library("BiocInstaller")
-biocLite("PGA")
+# Install the development version from GitHub:
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+install.packages("remotes")
+BiocManager::install("PGA")
 ```
 
 If you need the latest development version
 
 ```{r installgh, eval = FALSE}
-biocLite("wenbostar/PGA")
+# Install the development version from GitHub:
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+install.packages("remotes")
+BiocManager::install("wenbostar/PGA")
 ```
 ## Citation
 
