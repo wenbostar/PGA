@@ -42,4 +42,3 @@ reconstruction of transcriptome from RNA-seq data.
 transcript_seq_file <- system.file("extdata/input", "Trinity.fasta",package="PGA")
 createProDB4DenovoRNASeq(infa=transcript_seq_file)
 }
-

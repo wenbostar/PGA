@@ -36,7 +36,6 @@
 #' Default is false.
 #' @param alignment 0 or 1 to determine if peptide should be alignment or not.
 #' Default is 0.
-#' @param fdr FDR for peptide identification. Default is 0.01 at PSM level.
 #' @param xmx The maximum Java heap size. The unit is "G".
 #' @param ... Additional arguments
 #' @return none
@@ -64,7 +63,6 @@ easyRun=function(gtfFile=NULL,vcfFile=NULL,bedFile=NULL,spectra=NULL,
                  ## database searching
                  enzyme="[KR]|[X]", tol=10,tolu="ppm",itol=0.6,itolu="Daltons",
                  varmod=NULL,fixmod=NULL,miss=2,maxCharge=8,ti=FALSE, cpu=0, 
-                 fdr = 0.01,
                  alignment=1,xmx=2,...){
     
     ## Stage 1. Customized protein database construction
@@ -101,7 +99,7 @@ easyRun=function(gtfFile=NULL,vcfFile=NULL,bedFile=NULL,spectra=NULL,
     #cat(xml.path,"\n")
     cat("Stage 3. Post-processing.\n")
     #save(xml.path,var_tag,decoy_tag,db.files,outPrefix,iddir,alignment,xmx,file="t.rda")
-    parserGear(file=xml.path, novelPrefix= var_tag, fdr = fdr,
+    parserGear(file=xml.path, novelPrefix= var_tag,
                decoyPrefix = decoy_tag, db=db.files, prefix=outPrefix, 
                outdir=iddir, alignment=alignment, xmx=xmx)
     

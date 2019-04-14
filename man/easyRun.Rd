@@ -94,4 +94,3 @@ easyRun(gtfFile=gtffile,vcfFile=vcffile,bedFile=bedfile,spectra=msfile,
         fixmod = "57.021464@C", tol = 10, tolu = "ppm", itolu = "Daltons", 
         miss = 2, maxCharge = 8, ti = FALSE,xmx=1)
 }
-
