@@ -5,16 +5,19 @@
 \title{Create customized protein database from RNA-Seq data}
 \usage{
 dbCreator(gtfFile = NULL, vcfFile = NULL, bedFile = NULL,
-  annotation_path = NULL, outdir, outfile_name, lablersid = FALSE,
-  COSMIC = FALSE, bool_get_longest = TRUE, organism = "Homo sapiens",
-  make_decoy = TRUE, genome = NULL, ...)
+  tabFile = NULL, annotation_path = NULL, outdir, outfile_name,
+  lablersid = FALSE, COSMIC = FALSE, bool_get_longest = TRUE,
+  organism = "Homo sapiens", make_decoy = TRUE, genome = NULL,
+  debug = FALSE, ...)
 }
 \arguments{
 \item{gtfFile}{A GTF format file containing novel transcripts information}
 
 \item{vcfFile}{A VCF format file containing SNV and INDEL information}
 
-\item{bedFile}{A BED format file containing juction information}
+\item{bedFile}{A BED format file from Tophat2 containing juction information.}
+
+\item{tabFile}{A Tab format file from Hisat2 containing juction information (e.g. splicesites.tab). As HISAT2 is a successor to both HISAT and TopHat2, we recommend that users switch to this option.}
 
 \item{annotation_path}{This directory contains numerous pieces of genome 
 annotation information which can be downloaded by 
@@ -41,6 +44,8 @@ default is "Homo sapiens".}
 \item{genome}{Genome information. This is a BSgenome object(e.g. Hsapiens). 
 Default is NULL.}
 
+\item{debug}{Output the debug info (Default is <False>).}
+
 \item{...}{Additional arguments}
 }
 \value{
@@ -62,4 +67,3 @@ dbCreator(gtfFile=gtffile,vcfFile=vcffile,bedFile=bedfile,
           annotation_path=annotation,outfile_name=outfile_name,
           genome=Hsapiens,outdir=outfile_path)
 }
-

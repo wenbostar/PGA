@@ -1,3 +1,37 @@
+## This function requires the Tab format file from Hisat2. Read Tab file contain junctions into a GRanges object.
+
+Tab2Range <- function(tabfile)
+{   
+	options(stringsAsFactors=FALSE)
+	jun <- read.table(tabfile, sep='\t', header=F, stringsAsFactors=F)
+
+	#replace the strand "." with "+" and "-".
+	tmp<-jun[jun$V4==".",]
+	tmp_forward<-tmp
+	tmp_reverse<-tmp
+	tmp_forward$V4<-"+"
+	tmp_reverse$V4<-"-"
+	jun<-rbind(jun[jun$V4!=".",],tmp_forward,tmp_reverse)
+
+	part1_sta <- as.numeric(jun[,'V2'])+1-59
+	part1_end <- as.numeric(jun[,'V2'])+1
+	part2_sta <- as.numeric(jun[,'V3'])+1
+	part2_end <- as.numeric(jun[,'V3'])+1+59
+
+	junction <- data.frame(chr=jun[, 'V1'], id="NULL", start=jun[, 'V2'], 
+		end=jun[,'V3'], cov=255, strand=jun$V4, part1_len=0, 
+		part2_len=0, part1_sta, part1_end, part2_sta, part2_end)
+	if('chrM' %in% junction$chr) junction <- junction[-which(junction$chr=='chrM'), ]
+	if('MT' %in% junction$chr) junction <- junction[-which(junction$chr=='MT'), ]
+
+	junRange <- GRanges(seqnames=junction$chr, ranges=IRanges(start=junction$part1_end, 
+			end=junction$part2_sta), strand=junction$strand, id=junction$id,
+			cov=junction$cov, part1_len=junction$part1_len, part2_len=junction$part2_len, 
+			part1_sta=junction$part1_sta, part1_end=junction$part1_end, 
+			part2_sta=junction$part2_sta, part2_end=junction$part2_end)
+
+}
+
 
 Outputaberrant2 <- function(positiontab, outfa, outmtab, coding, proteinseq, 
                             ids, RPKM=NULL, ...){
@@ -93,7 +127,7 @@ Outputaberrant2 <- function(positiontab, outfa, outmtab, coding, proteinseq,
 
 OutputNovelJun2 <- function(junction_type, genome, outfa,outmtab, 
                             #outfile_c, 
-                            proteinseq, ...){
+                            proteinseq, debug=FALSE, ...){
     options(stringsAsFactors=FALSE)
     #ids <- subset(ids,pro_name!='')
     
@@ -136,12 +170,21 @@ OutputNovelJun2 <- function(junction_type, genome, outfa,outmtab,
     ###already did reverseComplement
     junseq1 <- getSeq(genome, junRange1)
     junseq2 <- getSeq(genome, junRange2)
+
     
     junseq_cat <- DNAStringSet(mapply(function(x, y, z) 
         ifelse(z == '+', paste(x, y, sep=''), paste(y, x, sep='')), 
         as.data.frame(junseq1)[, 1], 
         as.data.frame(junseq2)[, 1], as.character(strand(junRange1))))#
     
+    #debug
+    debug=T
+    if(debug){
+        debug_file<-data.frame(seqnames=novel_junc$seqnames, part1_sta=novel_junc$part1_sta,
+                           part1_end=novel_junc$part1_end,part2_sta=novel_junc$part2_sta,
+                           part1_end=novel_junc$part2_end,strand=novel_junc$strand, seq1=junseq1, seq2=junseq2, seqcat=junseq_cat)
+        write.table(debug_file,file="debug_file.tsv",quote = F, row.names=F)    
+    }
     #index_plus <- which(strand(junRange1) == '+')
     #index_minus <- which(strand(junRange1) == '-')
     #seqs_plus <- junseq_cat[index_plus]
@@ -659,7 +702,8 @@ PrepareAnnotationEnsembl2 <- function(mart, annotation_path,
 #' @return Several .RData file containing annotations needed for following analysis.
 #' @seealso \code{\link{PrepareAnnotationEnsembl2}}.
 #' @export
-#' @examples 
+#' @examples
+#' \dontrun{
 #' transcript_ids <- c("NM_001126112", "NM_033360", "NR_073499")
 #' pepfasta <- system.file("extdata", "refseq_pro_seq.fasta",
 #'                         package="customProDB")
@@ -669,6 +713,7 @@ PrepareAnnotationEnsembl2 <- function(mart, annotation_path,
 #' PrepareAnnotationRefseq2(genome='hg19', CDSfasta, pepfasta, annotation_path,
 #'                         dbsnp=NULL, transcript_ids=transcript_ids,
 #'                         splice_matrix=FALSE, COSMIC=FALSE)
+#' }
 PrepareAnnotationRefseq2 <- function(genome='hg19', CDSfasta, pepfasta, 
                                      annotation_path, dbsnp=NULL, 
                                      transcript_ids=NULL, splice_matrix=FALSE, 
@@ -685,17 +730,16 @@ PrepareAnnotationRefseq2 <- function(genome='hg19', CDSfasta, pepfasta,
     
     message("Prepare gene/transcript/protein id mapping information (ids.RData) ... ", 
             appendLF=FALSE)
-    
-    query_refGene <- ucscTableQuery(session, "refGene", table="refGene", 
-                                    names=transcript_ids)
+
+    query_refGene <- ucscTableQuery(session, "refSeqComposite", table="refGene")
     refGene <- getTable(query_refGene)
-    query <- ucscTableQuery(session, "refGene", table="hgFixed.refLink", 
-                            names=refGene[, 'name2'])
-    reflink <- getTable(query)
-    ids <- subset(reflink, mrnaAcc %in% refGene[, 'name'],select = name:protAcc)
+    refGene <- subset(refGene, name %in% transcript_ids)
+    
+    reflink <- .UCSC_dbselect("hgFixed", "refLink")
+    ids <- subset(reflink, mrnaAcc %in% refGene[, 'name'], select = name:protAcc)
     colnames(ids) <- c('gene_name', 'description', 'tx_name', 'pro_name')
     save(ids, file=paste(annotation_path, '/ids.RData', sep=''))
-    packageStartupMessage(" done")
+    packageStartupMessage(" done")    
     
     #tr_coding <- subset(ids,pro_name!="")
     #tr_noncoding <- subset(ids,pro_name == "")
@@ -1670,4 +1714,25 @@ addGeneName4Ensembl <- function(mart, report="report"){
             message("........ No conversion is required\n", appendLF=FALSE)
         }
     }
+}
+
+
+### See https://genome.ucsc.edu/goldenpath/help/mysql.html for how to connect
+### to a MySQL server at UCSC. By default UCSC_dbselect() uses the server
+### located on the US west coast.
+.UCSC_dbselect <- function(dbname, from, columns=NULL, where=NULL,
+                           server="genome-mysql.soe.ucsc.edu")
+{
+    columns <- if (is.null(columns)) "*" else paste0(columns, collapse=",")
+    SQL <- sprintf("SELECT %s FROM %s", columns, from)
+    if (!is.null(where)) {
+        stopifnot(isSingleString(where))
+        SQL <- paste(SQL, "WHERE", where)
+    }
+    dbconn <- dbConnect(RMariaDB::MariaDB(), dbname=dbname,
+                        username="genome",
+                        host=server,
+                        port=3306)
+    on.exit(dbDisconnect(dbconn))
+    dbGetQuery(dbconn, SQL)
 }

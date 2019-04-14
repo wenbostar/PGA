@@ -74,4 +74,3 @@ dat_file <- system.file("extdata/input", "mascot.dat",package="PGA")
 parserGear(file = dat_file, db = dbfile, decoyPrefix="#REV#",xmx=1,thread=8,
            outdir = "parser_outdir_mascot")
 }
-

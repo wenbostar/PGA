@@ -64,4 +64,3 @@ runTandem(spectra = msfile, fasta = dbfile, outdir = "./", cpu = 6,
           fixmod = "57.021464@C", tol = 10, tolu = "ppm", itol = 0.05,
           itolu = "Daltons", miss = 2, maxCharge = 8, ti = FALSE)
 }
-
