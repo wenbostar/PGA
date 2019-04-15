@@ -343,6 +343,7 @@ calculateFDR=function(psmfile=NULL,db=NULL,fdr=0.01,
                       protein_inference=FALSE,
                       xmx=2){
     
+    
     ph<-paste(.java.executable(),paste("-Xmx",xmx,"G",sep=""),"-cp",
               paste("\"",
                     paste(system.file("parser4PGA.jar",
@@ -364,6 +365,41 @@ calculateFDR=function(psmfile=NULL,db=NULL,fdr=0.01,
                   collapse=" ",sep=" ")
     
     outfile=system(command=fdrtool,intern=TRUE)
+    
+    ## summary
+    o_psm_file <- paste(out_dir,"/pga-peptideSummary.txt",sep="")
+    psm <- read.delim(o_psm_file,stringsAsFactors = FALSE)
+    n_psm <- psm %>% filter(isdecoy=="false") %>% nrow
+    n_pep <- psm %>% filter(isdecoy=="false") %>% select(peptide) %>% 
+        distinct() %>% nrow
+    # novel PSM
+    n_psm_novel <- psm %>% filter(isdecoy=="false",isSAP=="true") %>% nrow
+    n_pep_novel <- psm %>% filter(isdecoy=="false",isSAP=="true") %>% 
+        select(peptide) %>% 
+        distinct() %>% nrow
+    cat("Total identified PSMs:",n_psm,"\n")
+    cat("Total identified Peptides:",n_pep,"\n")
+    cat("Total identified novel PSMs:",n_psm_novel,"\n")
+    cat("Total identified novel peptides:",n_pep_novel,"\n")
+    
+    ## score plot
+    if(n_psm_novel >= 10){
+        score_fig <- paste(out_dir,"/score_plot.pdf",sep = "")
+        cat("Score distribution:",score_fig,"\n")
+        pdf(score_fig,width = 5,height = 5)
+        psm$isSAP <- ifelse(psm$isSAP=="false","Canonical peptides",
+                            "Novel peptides")
+        gg <- psm %>% filter(isdecoy=="false") %>% 
+            ggplot(aes(x=-log(evalue),color=isSAP)) +
+            geom_density()+
+            xlab("-log(score)")+
+            guides(color=guide_legend(title="Peptide"))+
+            scale_color_manual(values=c("black","red"))+
+            theme(legend.justification = c(1, 1), legend.position = c(1, 1))
+        print(gg)
+        dev.off()
+    }
+    
 }
 
 
