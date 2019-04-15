@@ -366,16 +366,16 @@ calculateFDR=function(psmfile=NULL,db=NULL,fdr=0.01,
               "-cp",
               paste(system.file("parser4PGA.jar",
                                 package="PGA"),sep="",collapse=""),
-              "cn.bgi.FDRcalculator",              
-              paste(" -i \"",psmfile,"\"",sep=""),
-              paste(" -d \"",db,"\"",sep=""),
-              paste(" -decoy \"",decoyPrefix,"\"",sep=""),
-              paste(" -novel \"",novelPrefix,"\"",sep=""),
-              paste(' -s "',ifelse(better_score_lower,1,0),'"',sep=""),
-              paste(' -r "',ifelse(remap,1,0),'"',sep=""),
-              paste(" -o\"",out_dir,"\"",sep=""),
-              paste(' -fdr ',fdr,sep=""),
-              paste(' -p ',ifelse(protein_inference,1,0),sep=""))
+              "cn.bgi.FDRcalculator",  
+              "-i",psmfile,
+              "-d",db,
+              "-decoy",decoyPrefix,
+              "-novel",novelPrefix,
+              "-s",ifelse(better_score_lower,1,0),
+              "-r",ifelse(remap,1,0),
+              "-o",out_dir,
+              "-fdr",fdr,
+              "-p",ifelse(protein_inference,1,0))
     
     outfile=processx::run(.java.executable(),fdrargs,spinner = TRUE,echo_cmd = TRUE)
     
