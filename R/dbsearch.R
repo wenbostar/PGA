@@ -360,7 +360,7 @@ calculateFDR=function(psmfile=NULL,db=NULL,fdr=0.01,
     }
     
     if(peptide_level==TRUE){
-        psm <- read.delim(o_psm_file,stringsAsFactors = FALSE)
+        psm <- read.delim(psmfile,stringsAsFactors = FALSE)
         if(better_score_lower==TRUE){
             psm <- psm %>% group_by(peptide) %>% arrange(score) %>% filter(row_number()==1)    
         }else{
