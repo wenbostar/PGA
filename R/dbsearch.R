@@ -321,6 +321,7 @@ check_parser=function(){
 #' @param psmfile PSM file in TSV format
 #' @param db A FASTA format database file used for MS/MS searching.
 #' @param fdr FDR cutoff, default is 0.01
+#' @param peptide_level Peptide level FDR, default is FALSE
 #' @param decoyPrefix The prefix of decoy sequences ID. Default is "###REV###".
 #' "###REV###" is the prefix which used by function \code{dbCreator}.
 #' @param novelPrefix The prefix of novel protein ID. Default is "VAR".
@@ -331,18 +332,35 @@ check_parser=function(){
 #' @param out_dir Output directory.
 #' @param protein_inference Whether or not to perform protein inference. Default is 
 #' FALSE
+#' @param score_t Score transformation for score distribution plot. 
+#' 0: no transformation, 1: -log(score).
 #' @param xmx The maximum Java heap size. The unit is "G". Default is 2.
 #' @export
 #' @return none
 calculateFDR=function(psmfile=NULL,db=NULL,fdr=0.01,
+                      peptide_level=FALSE,
                       decoyPrefix="###REV###",
                       novelPrefix="VAR",
                       better_score_lower=TRUE,
                       remap=FALSE,
                       out_dir="./",
                       protein_inference=FALSE,
+                      score_t = 1,
                       xmx=2){
     
+    if(peptide_level==TRUE){
+        psm <- read.delim(o_psm_file,stringsAsFactors = FALSE)
+        if(better_score_lower==TRUE){
+            psm <- psm %>% group_by(peptide) %>% arrange(score) %>% filter(row_number()==1)    
+        }else{
+            psm <- psm %>% group_by(peptide) %>% arrange(desc(score)) %>% filter(row_number()==1)    
+        }
+        psmfile <- paste(out_dir,"/peptide_psm.tsv",sep = "")
+        psm %>% write_tsv(path = psmfile)
+        cat("Peptide level FDR input:",psmfile,"\n")
+    }else{
+        cat("PSM level FDR input:",psmfile,"\n")
+    }
     
     ph<-paste(.java.executable(),paste("-Xmx",xmx,"G",sep=""),"-cp",
               paste("\"",
@@ -389,13 +407,18 @@ calculateFDR=function(psmfile=NULL,db=NULL,fdr=0.01,
         pdf(score_fig,width = 5,height = 5)
         psm$isSAP <- ifelse(psm$isSAP=="false","Canonical peptides",
                             "Novel peptides")
+        if(score_t == 1){
+            psm$evalue <- -log(psm$evalue)
+        }
         gg <- psm %>% filter(isdecoy=="false") %>% 
-            ggplot(aes(x=-log(evalue),color=isSAP)) +
+            ggplot(aes(x=evalue,color=isSAP)) +
             geom_density()+
-            xlab("-log(score)")+
             guides(color=guide_legend(title="Peptide"))+
             scale_color_manual(values=c("black","red"))+
             theme(legend.justification = c(1, 1), legend.position = c(1, 1))
+        if(score_t == 1){
+            gg <- gg + xlab("-log(score)")
+        }
         print(gg)
         dev.off()
     }
