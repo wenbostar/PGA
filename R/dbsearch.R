@@ -315,3 +315,57 @@ check_parser=function(){
     return(file.exists(f))
 
 }
+
+#' @title Perform separate FDR estimation
+#' @description Perform separate FDR estimation
+#' @param psmfile PSM file in TSV format
+#' @param db A FASTA format database file used for MS/MS searching.
+#' @param fdr FDR cutoff, default is 0.01
+#' @param decoyPrefix The prefix of decoy sequences ID. Default is "###REV###".
+#' "###REV###" is the prefix which used by function \code{dbCreator}.
+#' @param novelPrefix The prefix of novel protein ID. Default is "VAR".
+#' @param better_score_lower TRUE: lower score is better, FALSE: higher score is better.
+#' Default is TRUE.
+#' @param remap TRUE: re-map peptide to protein, 
+#' FALSE: use the peptide protein mapping data in the PSM file. Default is FALSE.
+#' @param out_dir Output directory.
+#' @param protein_inference Whether or not to perform protein inference. Default is 
+#' FALSE
+#' @param xmx The maximum Java heap size. The unit is "G". Default is 2.
+#' @export
+#' @return none
+calculateFDR=function(psmfile=NULL,db=NULL,fdr=0.01,
+                      decoyPrefix="###REV###",
+                      novelPrefix="VAR",
+                      better_score_lower=TRUE,
+                      remap=FALSE,
+                      out_dir="./",
+                      protein_inference=FALSE,
+                      xmx=2){
+    
+    ph<-paste(.java.executable(),paste("-Xmx",xmx,"G",sep=""),"-cp",
+              paste("\"",
+                    paste(system.file("parser4PGA.jar",
+                                      package="PGA"),sep="",collapse=""),
+                    "\"",sep=""),
+              "cn.bgi.FDRcalculator",
+              collapse=" ",sep=" ")
+    
+    fdrtool=paste(ph,
+                  paste(" -i \"",psmfile,"\"",sep=""),
+                  paste(" -d \"",db,"\"",sep=""),
+                  paste(" -decoy \"",decoyPrefix,"\"",sep=""),
+                  paste(" -novel \"",novelPrefix,"\"",sep=""),
+                  paste(' -s "',ifelse(better_score_lower,1,0),'"',sep=""),
+                  paste(' -r "',ifelse(remap,1,0),'"',sep=""),
+                  paste(" -o\"",out_dir,"\"",sep=""),
+                  paste(' -fdr ',fdr,sep=""),
+                  paste(' -p ',ifelse(protein_inference,1,0),sep=""),
+                  collapse=" ",sep=" ")
+    
+    outfile=system(command=tandemparser,intern=TRUE)
+}
+
+
+
+
