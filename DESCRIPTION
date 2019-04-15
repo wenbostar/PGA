@@ -34,7 +34,8 @@ Imports:
     customProDB (>= 1.21.5),
     pheatmap,
     dplyr,
-    processx
+    processx,
+    readr
 Suggests:
     RMariaDB,
     BSgenome.Hsapiens.UCSC.hg19,

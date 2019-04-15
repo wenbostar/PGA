@@ -38,6 +38,7 @@ importFrom(rTANDEM, rTParam, rTTaxo, setParamValue, tandem)
 importFrom(dplyr, "%>%", filter, select, arrange, row_number, 
            distinct, group_by)
 importFrom(processx,run)
+importFrom(readr,write_tsv)
 
 export(dbCreator)
 export(reportGear)
