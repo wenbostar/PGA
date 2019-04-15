@@ -316,15 +316,17 @@ check_parser=function(){
 
 }
 
-#' @title Perform separate FDR estimation
-#' @description Perform separate FDR estimation
+#' @title Perform global or separate FDR estimation
+#' @description Perform global or separate FDR estimation
 #' @param psmfile PSM file in TSV format
 #' @param db A FASTA format database file used for MS/MS searching.
 #' @param fdr FDR cutoff, default is 0.01
 #' @param peptide_level Peptide level FDR, default is FALSE
 #' @param decoyPrefix The prefix of decoy sequences ID. Default is "###REV###".
 #' "###REV###" is the prefix which used by function \code{dbCreator}.
-#' @param novelPrefix The prefix of novel protein ID. Default is "VAR".
+#' @param novelPrefix The prefix of novel protein ID. Default is NULL. If the 
+#' value is NULL, it will perform global FDR estimation. Otherwise, it will 
+#' perform separate FDR estimation for novel peptides.
 #' @param better_score_lower TRUE: lower score is better, FALSE: higher score is better.
 #' Default is TRUE.
 #' @param remap TRUE: re-map peptide to protein, 
@@ -335,18 +337,27 @@ check_parser=function(){
 #' @param score_t Score transformation for score distribution plot. 
 #' 0: no transformation, 1: -log(score).
 #' @param xmx The maximum Java heap size. The unit is "G". Default is 2.
+#' @param verbose Output level. Default is 1.
 #' @export
 #' @return none
 calculateFDR=function(psmfile=NULL,db=NULL,fdr=0.01,
                       peptide_level=FALSE,
                       decoyPrefix="###REV###",
-                      novelPrefix="VAR",
+                      novelPrefix=NULL,
                       better_score_lower=TRUE,
                       remap=FALSE,
                       out_dir="./",
                       protein_inference=FALSE,
                       score_t = 1,
-                      xmx=2){
+                      xmx=2,
+                      verbose=1){
+    
+    if(is.null(novelPrefix)){
+        cat("Global FDR estimation ...\n")
+        novelPrefix <- "ABCDEFGXXXXXABCDEFG"
+    }else{
+        cat("Separate FDR estimation ...\n")
+    }
     
     if(peptide_level==TRUE){
         psm <- read.delim(o_psm_file,stringsAsFactors = FALSE)
@@ -375,7 +386,8 @@ calculateFDR=function(psmfile=NULL,db=NULL,fdr=0.01,
               "-r",ifelse(remap,1,0),
               "-o",out_dir,
               "-fdr",fdr,
-              "-p",ifelse(protein_inference,1,0))
+              "-p",ifelse(protein_inference,1,0),
+              "-verbose",verbose)
     
     outfile=processx::run(.java.executable(),fdrargs,spinner = TRUE,
                           echo_cmd = TRUE,echo = TRUE)
