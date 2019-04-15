@@ -18,6 +18,12 @@ Please read this document to find how to use PGA: [PGA tutorial](http://biocondu
 
 Demo report of PGA output: [Demo report](http://wenbostar.github.io/PGA/report/index.html).
 
+### Global or separate FDR estimation
+
+Global FDR estimation at PSM or peptide level: [example](https://github.com/wenbostar/PGA/wiki/Global-FDR-estimation)
+
+Separate FDR estimation at PSM or peptide level: [example](https://github.com/wenbostar/PGA/wiki/Separate-FDR-estimation)
+
 ## Installation
 
 To install *[PGA](http://bioconductor.org/packages/PGA)*
