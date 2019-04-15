@@ -363,6 +363,7 @@ calculateFDR=function(psmfile=NULL,db=NULL,fdr=0.01,
     }
     
     fdrargs=c(paste("-Xmx",xmx,"G",sep=""),
+              "-cp",
               paste(system.file("parser4PGA.jar",
                                 package="PGA"),sep="",collapse=""),
               "cn.bgi.FDRcalculator",              
