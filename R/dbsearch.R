@@ -390,7 +390,7 @@ calculateFDR=function(psmfile=NULL,db=NULL,fdr=0.01,
               "-verbose",verbose)
     
     outfile=processx::run(.java.executable(),fdrargs,spinner = TRUE,
-                          echo_cmd = TRUE,echo = TRUE)
+                          echo_cmd = ifelse(verbose==1,FALSE,TRUE),echo = TRUE)
     
     ## summary
     o_psm_file <- paste(out_dir,"/pga-peptideSummary.txt",sep="")
