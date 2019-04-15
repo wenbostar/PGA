@@ -2,6 +2,7 @@
 [![Bioconductor release build Status](http://bioconductor.org/shields/build/release/bioc/PGA.svg)](http://bioconductor.org/packages/release/bioc/html/PGA.html) 
 [![Bioconductor devel build Status](http://bioconductor.org/shields/build/devel/bioc/PGA.svg)](http://bioconductor.org/packages/devel/bioc/html/PGA.html) 
 ![Github Releases](https://img.shields.io/github/downloads/wenbostar/PGA/latest/total.svg)
+[![HitCount](http://hits.dwyl.io/wenbostar/PGA.svg)](http://hits.dwyl.io/wenbostar/PGA)
 
 
 # `PGA`: a tool for ProteoGenomics Analysis

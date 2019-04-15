@@ -363,7 +363,7 @@ calculateFDR=function(psmfile=NULL,db=NULL,fdr=0.01,
                   paste(' -p ',ifelse(protein_inference,1,0),sep=""),
                   collapse=" ",sep=" ")
     
-    outfile=system(command=tandemparser,intern=TRUE)
+    outfile=system(command=fdrtool,intern=TRUE)
 }
 
 
