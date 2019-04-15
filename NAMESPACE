@@ -35,7 +35,7 @@ importFrom(customProDB,aaVariation,Bed2Range,InputVcf,JunctionType,
            OutputVarproseq_single,Positionincoding,
            PrepareAnnotationEnsembl,Varlocation)
 importFrom(rTANDEM, rTParam, rTTaxo, setParamValue, tandem)
-importFrom(dplyr, "%>%", filter, select, arrange, row_number)
+importFrom(dplyr, "%>%", filter, select, arrange, row_number,distinct)
 importFrom(processx,run)
 
 export(dbCreator)

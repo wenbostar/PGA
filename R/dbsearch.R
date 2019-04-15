@@ -377,7 +377,8 @@ calculateFDR=function(psmfile=NULL,db=NULL,fdr=0.01,
               "-fdr",fdr,
               "-p",ifelse(protein_inference,1,0))
     
-    outfile=processx::run(.java.executable(),fdrargs,spinner = TRUE,echo_cmd = TRUE)
+    outfile=processx::run(.java.executable(),fdrargs,spinner = TRUE,
+                          echo_cmd = TRUE,echo = TRUE)
     
     ## summary
     o_psm_file <- paste(out_dir,"/pga-peptideSummary.txt",sep="")
