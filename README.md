@@ -24,6 +24,10 @@ Global FDR estimation at PSM or peptide level: [example](https://github.com/wenb
 
 Separate FDR estimation at PSM or peptide level: [example](https://github.com/wenbostar/PGA/wiki/Separate-FDR-estimation)
 
+### Wiki
+
+More about [PGA](https://github.com/wenbostar/PGA/wiki).
+
 ## Installation
 
 To install *[PGA](http://bioconductor.org/packages/PGA)*
