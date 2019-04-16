@@ -75,6 +75,12 @@ To cite the `PGA` package in publications, please use:
 16. Misra, Biswapriya B. "Updates on resources, software tools, and databases for plant proteomics in 2016–2017." Electrophoresis 39.13 (2018): 1543-1557.
 17. Rong, Mingqiang, et al. "The defensive system of tree frog skin identified by peptidomics and RNA sequencing analysis." Amino Acids 51.2 (2019): 345-353.
 18. Rong, Mingqiang, et al. "PPIP: Automated Software for Identification of Bioactive Endogenous Peptides." Journal of proteome research (2019).
+19. Nagaraj, Shivashankar H., et al. "PGTools: a software suite for proteogenomic data analysis and visualization." Journal of proteome research 14.5 (2015): 2255-2266.
+20. Sheynkman, Gloria M., et al. "Proteogenomics: integrating next-generation sequencing and mass spectrometry to characterize human proteomic variation." Annual review of analytical chemistry 9 (2016): 521-545.
+21. Menschaert, Gerben, and David Fenyö. "Proteogenomics from a bioinformatics angle: A growing field." Mass spectrometry reviews 36.5 (2017): 584-599.
+22. Komor, Malgorzata A., et al. "Identification of differentially expressed splice variants by the proteogenomic pipeline Splicify." Molecular & Cellular Proteomics 16.10 (2017): 1850-1863.
+23. Hernandez-Valladares, Maria, et al. "Proteogenomics approaches for studying cancer biology and their potential in the identification of acute myeloid leukemia biomarkers." Expert review of proteomics 14.8 (2017): 649-663.
+24. Ischenko, Dmitry, et al. "Large scale analysis of amino acid substitutions in bacterial proteomics." BMC bioinformatics 17.1 (2016): 450.
 ## Contribution
 
 Contributions to the package are more than welcome. 
