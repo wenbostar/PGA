@@ -66,6 +66,15 @@ To cite the `PGA` package in publications, please use:
 7. Ruggles, Kelly V., et al. "Methods, tools and current perspectives in proteogenomics." Molecular & Cellular Proteomics 16.6 (2017): 959-981.
 8. Peng, Xinxin, et al. "A-to-I RNA editing contributes to proteomic diversity in cancer." Cancer cell 33.5 (2018): 817-828.
 9. Zhang, Minying, et al. "RNA editing derived epitopes function as cancer antigens to elicit immune responses." Nature communications 9.1 (2018): 3919.
+10. Low, Teck Yew, et al. "Connecting Proteomics to Next‐Generation Sequencing: Proteogenomics and Its Current Applications in Biology." Proteomics (2018): 1800235.
+11. Wen, Bo, Xiaojing Wang, and Bing Zhang. "PepQuery enables fast, accurate, and convenient proteomic validation of novel genomic alterations." Genome research 29.3 (2019): 485-493.
+12. Lobas, Anna A., et al. "Proteogenomics of malignant melanoma cell lines: the effect of stringency of exome data filtering on variant peptide identification in shotgun proteomics." Journal of proteome research 17.5 (2018): 1801-1811.
+13. Robin, Thibault, et al. "Large-scale reanalysis of publicly available HeLa cell proteomics data in the context of the Human Proteome Project." Journal of proteome research 17.12 (2018): 4160-4170.
+14. Yang, Mingkun, et al. "Genome annotation of a model diatom Phaeodactylum tricornutum using an integrated proteogenomic pipeline." Molecular plant 11.10 (2018): 1292-1307.
+15. Cifani, Paolo, et al. "ProteomeGenerator: A framework for comprehensive proteomics based on de novo transcriptome assembly and high-accuracy peptide mass spectral matching." Journal of proteome research 17.11 (2018): 3681-3692.
+16. Misra, Biswapriya B. "Updates on resources, software tools, and databases for plant proteomics in 2016–2017." Electrophoresis 39.13 (2018): 1543-1557.
+17. Rong, Mingqiang, et al. "The defensive system of tree frog skin identified by peptidomics and RNA sequencing analysis." Amino Acids 51.2 (2019): 345-353.
+18. Rong, Mingqiang, et al. "PPIP: Automated Software for Identification of Bioactive Endogenous Peptides." Journal of proteome research (2019).
 ## Contribution
 
 Contributions to the package are more than welcome. 
