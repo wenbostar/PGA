@@ -214,6 +214,7 @@ parserGear=function(file=NULL,db=NULL,outdir="parser_outdir",
     }
       
     fdrargs=c(paste("-Xmx",ifelse(is.null(xmx),"",paste(xmx,"G",sep="")),sep=""),
+              "-jar",
               paste(system.file("parser4PGA.jar",
                                 package="PGA"),sep="",collapse=""),
               "-i",file,
