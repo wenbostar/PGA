@@ -213,7 +213,7 @@ parserGear=function(file=NULL,db=NULL,outdir="parser_outdir",
         alignment=0
     }
       
-    fdrargs=c(paste("-Xmx",ifelse(is.null(xmx),"",paste(xmx,"G",sep="")),sep=" "),
+    fdrargs=c(paste("-Xmx",ifelse(is.null(xmx),"",paste(xmx,"G",sep="")),sep=""),
               paste(system.file("parser4PGA.jar",
                                 package="PGA"),sep="",collapse=""),
               "-i",file,
@@ -306,7 +306,7 @@ calculateFDR=function(psmfile=NULL,db=NULL,fdr=0.01,
               "-cp",
               paste(system.file("parser4PGA.jar",
                                 package="PGA"),sep="",collapse=""),
-              "cn.bgi.FDRcalculator",  
+              "FDRcalculator",  
               "-i",psmfile,
               "-d",db,
               "-decoy",decoyPrefix,
