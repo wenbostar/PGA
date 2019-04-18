@@ -196,116 +196,45 @@ runTandem<-function(spectra="",fasta="",outdir=".",cpu=1,
 parserGear=function(file=NULL,db=NULL,outdir="parser_outdir",
                     prefix="pga", fdr = 0.01,
                     novelPrefix="VAR",decoyPrefix="###REV###",
-                    alignment=1,xmx=NULL,thread=1,msfile=NULL)
-{
+                    alignment=1,xmx=NULL,thread=1,msfile=NULL,verbose=1){
 
     ## alignment is not valid, if "file" is xml format, alignment =1.
-    regx=regexpr("xml$",file,perl=TRUE);
-    regd=regexpr("dat$",file,perl=TRUE);
-    regm=regexpr("mzid$",file,perl=TRUE);
-    if(is.null(xmx))
-    {
-        if(regx[1]!=-1)
-        {
-            ph<-paste(.java.executable(),"-jar",
-                      paste("\"",
-                            paste(system.file("parser4PGA.jar",
-                                              package="PGA"),sep="",collapse=""),
-                            "\"",sep=""),
-                      collapse=" ",sep=" ")
-            alignment=1;
-        }
-        else if(regd!=-1)
-        {
-            ph<-paste(.java.executable(),"-cp",
-                      paste("\"",
-                            paste(system.file("parser4PGA.jar",
-                                              package="PGA"),sep="",collapse=""),
-                            "\"",sep=""),
-                      "cn.bgi.MascotParser",
-                      collapse=" ",sep=" ")
-            alignment=0;
-        }
-        else if(regm!=-1)
-        {
-            ph<-paste(.java.executable(),"-cp",
-                      paste("\"",
-                            paste(system.file("parser4PGA.jar",
-                                              package="PGA"),sep="",collapse=""),
-                            "\"",sep=""),
-                      "cn.bgi.mzIDparser",
-                      collapse=" ",sep=" ")
-            alignment=0;
-        }
+    regx=regexpr("xml$",file,perl=TRUE)
+    regd=regexpr("dat$",file,perl=TRUE)
+    regm=regexpr("mzid$",file,perl=TRUE)
+    
+    if(regx[1]!=-1){
+        alignment=1
     }
-    else
-    {
-        if(regx[1]!=-1)
-        {
-            ph<-paste(.java.executable(),paste("-Xmx",xmx,"G",sep=""),"-jar",
-                      paste("\"",
-                            paste(system.file("parser4PGA.jar",
-                                              package="PGA"),sep="",collapse=""),
-                            "\"",sep=""),
-                      collapse=" ",sep=" ");
-            alignment=1;
-        }
-        if(regd[1]!=-1)
-        {
-            ph<-paste(.java.executable(),paste("-Xmx",xmx,"G",sep=""),"-cp",
-                      paste("\"",
-                            paste(system.file("parser4PGA.jar",
-                                              package="PGA"),sep="",collapse=""),
-                            "\"",sep=""),
-                      "cn.bgi.MascotParser",
-                      collapse=" ",sep=" ");
-            alignment=0;
-        }
-        if(regm[1]!=-1)
-        {
-            ph<-paste(.java.executable(),paste("-Xmx",xmx,"G",sep=""),"-cp",
-                      paste("\"",
-                            paste(system.file("parser4PGA.jar",
-                                              package="PGA"),sep="",collapse=""),
-                            "\"",sep=""),
-                      "cn.bgi.mzIDparser",
-                      collapse=" ",sep=" ");
-            alignment=0;
-        }
+    if(regd[1]!=-1){
+        alignment=0
     }
-
     if(regm[1]!=-1){
-
-        tandemparser=paste(ph,
-                           paste("\"",file,"\"",sep=""),
-                           paste("\"",db,"\"",sep=""),
-                           paste("\"",prefix,"\"",sep=""),
-                           paste("\"",outdir,"\"",sep=""),
-                           paste('"',decoyPrefix,'"',sep=""),
-                           paste('"',novelPrefix,'"',sep=""),
-                           alignment,
-                           thread,
-                           msfile,
-                           fdr,
-                           collapse=" ",sep=" ")
-    }else{
-
-        tandemparser=paste(ph,
-                           paste("\"",file,"\"",sep=""),
-                           paste("\"",db,"\"",sep=""),
-                           paste("\"",prefix,"\"",sep=""),
-                           paste("\"",outdir,"\"",sep=""),
-                           paste('"',decoyPrefix,'"',sep=""),
-                           paste('"',novelPrefix,'"',sep=""),
-                           alignment,
-                           thread,
-                           fdr,
-                           collapse=" ",sep=" ")
+        alignment=0
     }
+      
+    fdrargs=c(paste("-Xmx",ifelse(is.null(xmx),"",paste(xmx,"G",sep="")),sep=" "),
+              paste(system.file("parser4PGA.jar",
+                                package="PGA"),sep="",collapse=""),
+              "-i",file,
+              "-d",db,
+              "-decoy",decoyPrefix,
+              "-novel",novelPrefix,
+              "-r",alignment,
+              "-o",outdir,
+              "-prefix",prefix,
+              "-fdr",fdr,
+              "-verbose",verbose)
+    
+    if(!is.null(msfile)){
+        fdrargs <- c(fdrargs,
+                     "-ms",msfile)
+    }
+    
+    outfile=processx::run(.java.executable(),fdrargs,spinner = TRUE,
+                          echo_cmd = ifelse(verbose==1,FALSE,TRUE),echo = TRUE)
 
 
-    #cat(tandemparser)
-    outfile=system(command=tandemparser,intern=TRUE)
 }
 
 
