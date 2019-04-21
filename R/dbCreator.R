@@ -219,3 +219,20 @@ dbCreator <- function(gtfFile=NULL,vcfFile=NULL,bedFile=NULL,tabFile=NULL,annota
     return(final_db_file)
 }
 
+buildTargetDecoyDB=function(db,cont_file=NULL,decoyPrefix="###REV###",
+                            output="target_decoy.fasta",
+                            verbose=1){
+    dbargs=c("-cp",
+              paste(system.file("parser4PGA.jar",
+                                package="PGA"),sep="",collapse=""),
+              "db",  
+              "-i",db,
+              "-c",cont_file,
+              "-decoy",decoyPrefix,
+              "-o",output,
+              "-verbose",verbose)
+    
+    outfile=processx::run(.java.executable(),dbargs,spinner = TRUE,
+                          echo_cmd = ifelse(verbose==1,FALSE,TRUE),echo = TRUE)
+    
+}
