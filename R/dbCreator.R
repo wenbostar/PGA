@@ -229,8 +229,7 @@ buildTargetDecoyDB=function(db,cont_file=NULL,decoyPrefix="###REV###",
               "-i",db,
               "-c",cont_file,
               "-decoy",decoyPrefix,
-              "-o",output,
-              "-verbose",verbose)
+              "-o",output)
     
     outfile=processx::run(.java.executable(),dbargs,spinner = TRUE,
                           echo_cmd = ifelse(verbose==1,FALSE,TRUE),echo = TRUE)
