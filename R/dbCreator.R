@@ -229,7 +229,7 @@ buildTargetDecoyDB=function(db,cont_file=NULL,decoyPrefix="###REV###",
               "-i",db,
               "-c",cont_file,
               "-o",output)
-    if(is.null(decoyPrefix)){
+    if(!is.null(decoyPrefix)){
         dbargs=c(dbargs,"-decoy",decoyPrefix)
     }
     
