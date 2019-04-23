@@ -88,8 +88,8 @@ reportGear=function(parser_dir, tab_dir, report_dir){
     
     
     # library(ggplot2)
-    pep_data<-read.delim(pepsummary_path)
-    pro_data<-read.delim(prosummary_path)
+    pep_data<-read.delim(pepsummary_path,stringsAsFactors=F)
+    pro_data<-read.delim(prosummary_path,stringsAsFactors=F)
     
     id_stat <- data.frame(Item=c("No. of PSMs",
                                  "No. of peptides",
@@ -297,8 +297,8 @@ reportIDL <- function(parser_dir,tab_dir,report_dir){
     ## setnames(x,old,new), setting or changing column names by reference.
     ## avoid duplication with the following "index"
     setnames(dt,"index","Query") 
-    dt_var<-subset(dt,isSAP=="true")
-    dt_con<-subset(dt,isSAP=="false") 
+    dt_var<-subset(dt,tolower(as.character(isSAP))=="true")
+    dt_con<-subset(dt,tolower(as.character(isSAP))=="false") 
     
     dt_tab<-read.delim(tab_path,header=TRUE,stringsAsFactors=FALSE)
     setDT(dt_tab)
@@ -412,8 +412,8 @@ reportJUC <- function(parser_dir,tab_dir,report_dir){
     
     dt<-fread(pepsummary_path,header=TRUE)
     setnames(dt,"index","Query") 
-    dt_var<-subset(dt,isSAP=="true")
-    dt_con<-subset(dt,isSAP=="false") 
+    dt_var<-subset(dt,tolower(as.character(isSAP))=="true")
+    dt_con<-subset(dt,tolower(as.character(isSAP))=="false") 
     
     dt_tab<-read.delim(tab_path,header=TRUE,stringsAsFactors=FALSE)
     setDT(dt_tab)
@@ -574,8 +574,8 @@ reportNTX <- function(parser_dir,tab_dir,report_dir){
     
     dt<-fread(pepsummary_path,header=TRUE)
     setnames(dt,"index","Query") 
-    dt_var<-subset(dt,isSAP=="true")
-    dt_con<-subset(dt,isSAP=="false") 
+    dt_var<-subset(dt,tolower(as.character(isSAP))=="true")
+    dt_con<-subset(dt,tolower(as.character(isSAP))=="false") 
     
     dt_tab<-read.delim(tab_path,header=TRUE,stringsAsFactors=FALSE)
     setDT(dt_tab)
@@ -694,8 +694,8 @@ reportSNV <- function(parser_dir,tab_dir,report_dir="./"){
     
     dt<-fread(pepsummary_path,header=TRUE)
     setnames(dt,"index","Query") 
-    dt_var<-subset(dt,isSAP==TRUE)
-    dt_con<-subset(dt,isSAP==FALSE) 
+    dt_var<-subset(dt,tolower(as.character(isSAP))=="true")
+    dt_con<-subset(dt,tolower(as.character(isSAP))=="false") 
     
     dt_tab<-read.delim(tab_path,header=TRUE,stringsAsFactors=FALSE)
     setDT(dt_tab)
