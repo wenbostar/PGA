@@ -425,7 +425,7 @@ reportJUC <- function(parser_dir,tab_dir,report_dir){
     }
 
     dt<-dt[,.(prot=unlist(strsplit(protein, ";")),
-              range=unlist(strsplit(position, ";"))),
+              range=unlist(strsplit(as.character(position), ";"))),
            by=list(Query,evalue,charge,mz,delta_da,delta_ppm,
                    peptide,miss,rt,isSAP,mods,Qvalue)]
     dt[,isUnique:=all(like(prot,"(VAR\\|NTX|VAR\\|JUC)")),by=.(Query)]
@@ -707,7 +707,7 @@ reportSNV <- function(parser_dir,tab_dir,report_dir="./"){
     }
 
     dt<-dt[,.(prot=unlist(strsplit(protein, ";")),
-              range=unlist(strsplit(position, ";"))),
+              range=unlist(strsplit(as.character(position), ";"))),
            by=list(Query,evalue,charge,mz,delta_da,delta_ppm,peptide,miss,rt,isSAP,mods,Qvalue)]
     dt<-subset(dt,like(prot,"VAR\\|SNV\\d+"))
     dt[,isUnique:=all(like(prot,"VAR\\|SNV")),by=.(Query)]
