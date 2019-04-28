@@ -4,9 +4,9 @@
 \alias{PrepareAnnotationRefseq2}
 \title{Prepare annotation from Refseq}
 \usage{
-PrepareAnnotationRefseq2(genome = "hg19", CDSfasta, pepfasta, annotation_path,
-  dbsnp = NULL, transcript_ids = NULL, splice_matrix = FALSE,
-  COSMIC = FALSE, ...)
+PrepareAnnotationRefseq2(genome = "hg19", CDSfasta, pepfasta,
+  annotation_path, dbsnp = NULL, transcript_ids = NULL,
+  splice_matrix = FALSE, COSMIC = FALSE, ...)
 }
 \arguments{
 \item{genome}{See detail in function \code{\link{PrepareAnnotationRefseq}}.}

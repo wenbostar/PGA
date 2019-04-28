@@ -5,8 +5,8 @@
 \title{Create protein database based on the transcripts from de novo 
 reconstruction of transcriptome from RNA-seq data}
 \usage{
-createProDB4DenovoRNASeq(infa = "./trinity.fasta", bool_use_3frame = FALSE,
-  outmtab = "novel_transcripts_ntx.tab",
+createProDB4DenovoRNASeq(infa = "./trinity.fasta",
+  bool_use_3frame = FALSE, outmtab = "novel_transcripts_ntx.tab",
   outfa = "./novel_transcripts_ntx.fasta", bool_get_longest = TRUE,
   make_decoy = TRUE, decoy_tag = "#REV#", outfile_name = "test")
 }

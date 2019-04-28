@@ -4,13 +4,14 @@
 \alias{easyRun}
 \title{easyRun}
 \usage{
-easyRun(gtfFile = NULL, vcfFile = NULL, bedFile = NULL, spectra = NULL,
-  annotation_path = NULL, outdir = "pga_dir", outPrefix = "pga",
-  lablersid = FALSE, COSMIC = FALSE, bool_get_longest = TRUE,
-  organism = "Homo sapiens", genome = NULL, enzyme = "[KR]|[X]",
-  tol = 10, tolu = "ppm", itol = 0.6, itolu = "Daltons",
-  varmod = NULL, fixmod = NULL, miss = 2, maxCharge = 8, ti = FALSE,
-  cpu = 0, alignment = 1, xmx = 2, ...)
+easyRun(gtfFile = NULL, vcfFile = NULL, bedFile = NULL,
+  spectra = NULL, annotation_path = NULL, outdir = "pga_dir",
+  outPrefix = "pga", lablersid = FALSE, COSMIC = FALSE,
+  bool_get_longest = TRUE, organism = "Homo sapiens", genome = NULL,
+  enzyme = "[KR]|[X]", tol = 10, tolu = "ppm", itol = 0.6,
+  itolu = "Daltons", varmod = NULL, fixmod = NULL, miss = 2,
+  maxCharge = 8, ti = FALSE, cpu = 0, fdr = 0.01, alignment = 1,
+  xmx = 2, ...)
 }
 \arguments{
 \item{gtfFile}{A GTF format file containing novel transcripts information}
@@ -66,6 +67,8 @@ Default is "[KR]|[X]".}
 Default is false.}
 
 \item{cpu}{The number of CPU used for X!Tandem search. Default is 1.}
+
+\item{fdr}{FDR for peptide identification. Default is 0.01 at PSM level.}
 
 \item{alignment}{0 or 1 to determine if peptide should be alignment or not.
 Default is 0.}

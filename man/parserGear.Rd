@@ -5,8 +5,9 @@
 \title{Post-processing for the identification result}
 \usage{
 parserGear(file = NULL, db = NULL, outdir = "parser_outdir",
-  prefix = "pga", novelPrefix = "VAR", decoyPrefix = "###REV###",
-  alignment = 1, xmx = NULL, thread = 1, msfile = NULL)
+  prefix = "pga", fdr = 0.01, novelPrefix = "VAR",
+  decoyPrefix = "###REV###", alignment = 1, xmx = NULL, thread = 1,
+  msfile = NULL, verbose = 1)
 }
 \arguments{
 \item{file}{MS/MS search file. Currently, only XML format file
@@ -19,6 +20,8 @@ Usually, it is from the output of the function \code{dbCreator}.}
 \item{outdir}{Output directory.}
 
 \item{prefix}{The prefix of output file.}
+
+\item{fdr}{FDR for peptide identification. Default is 0.01 at PSM level.}
 
 \item{novelPrefix}{The prefix of novel protein ID. Default is "VAR".
 "VAR" is the prefix which used by function \code{dbCreator}. This value
