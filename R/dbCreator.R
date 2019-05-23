@@ -4,7 +4,8 @@
 ##' RNA-Seq data
 ##' @param gtfFile A GTF format file containing novel transcripts information
 ##' @param vcfFile A VCF format file containing SNV and INDEL information
-##' @param bedFile A BED format file containing juction information
+##' @param bedFile A BED format file from Tophat2 containing juction information. 
+##' @param tabFile A Tab format file from Hisat2 containing juction information (e.g. splicesites.tab). As HISAT2 is a successor to both HISAT and TopHat2, we recommend that users switch to this option. 
 ##' @param annotation_path This directory contains numerous pieces of genome 
 ##' annotation information which can be downloaded by 
 ##' \code{\link{PrepareAnnotationEnsembl2}} or \code{\link{PrepareAnnotationRefseq2}}.
@@ -21,6 +22,7 @@
 ##' @param make_decoy A logical indicating whether to add the decoy sequences
 ##' @param genome Genome information. This is a BSgenome object(e.g. Hsapiens). 
 ##' Default is NULL.
+##' @param debug Output the debug info (Default is <False>). 
 ##' @param ... Additional arguments
 ##' @export
 ##' @return The database file
@@ -35,10 +37,10 @@
 ##' dbCreator(gtfFile=gtffile,vcfFile=vcffile,bedFile=bedfile,
 ##'           annotation_path=annotation,outfile_name=outfile_name,
 ##'           genome=Hsapiens,outdir=outfile_path)
-dbCreator <- function(gtfFile=NULL,vcfFile=NULL,bedFile=NULL,annotation_path=NULL, 
+dbCreator <- function(gtfFile=NULL,vcfFile=NULL,bedFile=NULL,tabFile=NULL,annotation_path=NULL, 
                       outdir, outfile_name,lablersid=FALSE, COSMIC=FALSE,
                       bool_get_longest=TRUE,organism="Homo sapiens",
-                      make_decoy=TRUE, genome=NULL, ...) {
+                      make_decoy=TRUE, genome=NULL,debug=FALSE, ...) {
     
     dir.create(outdir,showWarnings = FALSE,recursive = TRUE)
     
@@ -171,10 +173,25 @@ dbCreator <- function(gtfFile=NULL,vcfFile=NULL,bedFile=NULL,annotation_path=NUL
         outm_junc <- paste(outdir, '/', outfile_name, 
                            '_junc.tab', sep='')
         OutputNovelJun2(junction_type, genome, outf_junc,outm_junc, 
-                        proteinseq)
+                        proteinseq,debug)
         falist<-c(outf_junc,falist)
         packageStartupMessage(" done")
-    }
+    } else if (!is.null(tabFile) & !is.null(genome)){
+        message("Output novel junction peptides... ", appendLF=FALSE)
+        splicemax <- ''
+        load(paste(annotation_path, '/splicemax.RData', sep=''))
+        txdb <- loadDb(paste(annotation_path, '/txdb.sqlite', sep=''))
+        jun <-  Tab2Range(tabFile)
+        junction_type <- JunctionType(jun, splicemax, txdb, ids)
+        outf_junc <- paste(outdir, '/', outfile_name, 
+                           '_junc.fasta', sep='')
+        outm_junc <- paste(outdir, '/', outfile_name, 
+                           '_junc.tab', sep='')
+        OutputNovelJun2(junction_type, genome, outf_junc,outm_junc, 
+                        proteinseq,debug)
+        falist<-c(outf_junc,falist)
+        packageStartupMessage(" done")
+	}
     
     if( !is.null(gtfFile) & !is.null(genome) ){
         message("Output novel transripts... ", appendLF=FALSE)
@@ -202,3 +219,21 @@ dbCreator <- function(gtfFile=NULL,vcfFile=NULL,bedFile=NULL,annotation_path=NUL
     return(final_db_file)
 }
 
+buildTargetDecoyDB=function(db,cont_file=NULL,decoyPrefix="###REV###",
+                            output="target_decoy.fasta",
+                            verbose=1){
+    dbargs=c("-cp",
+              paste(system.file("parser4PGA.jar",
+                                package="PGA"),sep="",collapse=""),
+              "db",  
+              "-i",db,
+              "-c",cont_file,
+              "-o",output)
+    if(!is.null(decoyPrefix)){
+        dbargs=c(dbargs,"-decoy",decoyPrefix)
+    }
+    
+    outfile=processx::run(.java.executable(),dbargs,spinner = TRUE,
+                          echo_cmd = ifelse(verbose==1,FALSE,TRUE),echo = TRUE)
+    
+}

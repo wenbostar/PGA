@@ -4,9 +4,9 @@
 \alias{PrepareAnnotationRefseq2}
 \title{Prepare annotation from Refseq}
 \usage{
-PrepareAnnotationRefseq2(genome = "hg19", CDSfasta, pepfasta, annotation_path,
-  dbsnp = NULL, transcript_ids = NULL, splice_matrix = FALSE,
-  COSMIC = FALSE, ...)
+PrepareAnnotationRefseq2(genome = "hg19", CDSfasta, pepfasta,
+  annotation_path, dbsnp = NULL, transcript_ids = NULL,
+  splice_matrix = FALSE, COSMIC = FALSE, ...)
 }
 \arguments{
 \item{genome}{See detail in function \code{\link{PrepareAnnotationRefseq}}.}
@@ -35,6 +35,7 @@ Prepare the annotation for Refseq through UCSC table browser. This
 function is modified from the function \code{\link{PrepareAnnotationRefseq}} in \pkg{customProDB}.
 }
 \examples{
+\dontrun{
 transcript_ids <- c("NM_001126112", "NM_033360", "NR_073499")
 pepfasta <- system.file("extdata", "refseq_pro_seq.fasta",
                         package="customProDB")
@@ -45,7 +46,7 @@ PrepareAnnotationRefseq2(genome='hg19', CDSfasta, pepfasta, annotation_path,
                         dbsnp=NULL, transcript_ids=transcript_ids,
                         splice_matrix=FALSE, COSMIC=FALSE)
 }
+}
 \seealso{
 \code{\link{PrepareAnnotationEnsembl2}}.
 }
-

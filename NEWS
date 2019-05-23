@@ -1,3 +1,8 @@
+Version 1.14.1
+
+o Add a parameter to set FDR
+o Update parser program
+
 Version 1.13.3
 
 o Fix bug in function reportGear.R
@@ -5,6 +10,18 @@ o Fix bug in function reportGear.R
 Version 1.13.2
 
 o Fix bug in function reportGear.R
+
+Version 1.11.4
+
+o Fix bug in function PrepareAnnotationRefseq2.R
+
+Version 1.11.2
+
+o Add a option 'tabFile' in the 'dbCreator' function for the support of Hisat2 "splicesites.tab" in junction construction. As HISAT2 is a successor to both HISAT and TopHat2, we recommend that users switch to 'tabFile' from HISAT2 instead of 'bedFile' from Tophat2.
+
+Version 1.9.1
+
+o As the "getTable()" of rtracklayer would produce a Bad Request error. We temporarily disabled the code checking of the "PrepareAnnotationRefseq2" function until the bug had been fixed. Please use the "PrepareAnnotationEnsembl2" to prepare the annotation file instead of "PrepareAnnotationRefseq2".
 
 Version 1.11.4
 

@@ -35,7 +35,10 @@ importFrom(customProDB,aaVariation,Bed2Range,InputVcf,JunctionType,
            OutputVarproseq_single,Positionincoding,
            PrepareAnnotationEnsembl,Varlocation)
 importFrom(rTANDEM, rTParam, rTTaxo, setParamValue, tandem)
-
+importFrom(dplyr, "%>%", filter, select, arrange, row_number, 
+           distinct, group_by)
+importFrom(processx,run)
+importFrom(readr,write_tsv)
 
 export(dbCreator)
 export(reportGear)
@@ -46,3 +49,5 @@ export(PrepareAnnotationEnsembl2)
 export(PrepareAnnotationRefseq2)
 export(createProDB4DenovoRNASeq)
 export(addGeneName4Ensembl)
+export(calculateFDR)
+export(buildTargetDecoyDB)

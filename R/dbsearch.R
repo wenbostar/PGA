@@ -196,116 +196,46 @@ runTandem<-function(spectra="",fasta="",outdir=".",cpu=1,
 parserGear=function(file=NULL,db=NULL,outdir="parser_outdir",
                     prefix="pga", fdr = 0.01,
                     novelPrefix="VAR",decoyPrefix="###REV###",
-                    alignment=1,xmx=NULL,thread=1,msfile=NULL)
-{
+                    alignment=1,xmx=NULL,thread=1,msfile=NULL,verbose=1){
 
     ## alignment is not valid, if "file" is xml format, alignment =1.
-    regx=regexpr("xml$",file,perl=TRUE);
-    regd=regexpr("dat$",file,perl=TRUE);
-    regm=regexpr("mzid$",file,perl=TRUE);
-    if(is.null(xmx))
-    {
-        if(regx[1]!=-1)
-        {
-            ph<-paste(.java.executable(),"-jar",
-                      paste("\"",
-                            paste(system.file("parser4PGA.jar",
-                                              package="PGA"),sep="",collapse=""),
-                            "\"",sep=""),
-                      collapse=" ",sep=" ")
-            alignment=1;
-        }
-        else if(regd!=-1)
-        {
-            ph<-paste(.java.executable(),"-cp",
-                      paste("\"",
-                            paste(system.file("parser4PGA.jar",
-                                              package="PGA"),sep="",collapse=""),
-                            "\"",sep=""),
-                      "cn.bgi.MascotParser",
-                      collapse=" ",sep=" ")
-            alignment=0;
-        }
-        else if(regm!=-1)
-        {
-            ph<-paste(.java.executable(),"-cp",
-                      paste("\"",
-                            paste(system.file("parser4PGA.jar",
-                                              package="PGA"),sep="",collapse=""),
-                            "\"",sep=""),
-                      "cn.bgi.mzIDparser",
-                      collapse=" ",sep=" ")
-            alignment=0;
-        }
+    regx=regexpr("xml$",file,perl=TRUE)
+    regd=regexpr("dat$",file,perl=TRUE)
+    regm=regexpr("mzid$",file,perl=TRUE)
+    
+    if(regx[1]!=-1){
+        alignment=1
     }
-    else
-    {
-        if(regx[1]!=-1)
-        {
-            ph<-paste(.java.executable(),paste("-Xmx",xmx,"G",sep=""),"-jar",
-                      paste("\"",
-                            paste(system.file("parser4PGA.jar",
-                                              package="PGA"),sep="",collapse=""),
-                            "\"",sep=""),
-                      collapse=" ",sep=" ");
-            alignment=1;
-        }
-        if(regd[1]!=-1)
-        {
-            ph<-paste(.java.executable(),paste("-Xmx",xmx,"G",sep=""),"-cp",
-                      paste("\"",
-                            paste(system.file("parser4PGA.jar",
-                                              package="PGA"),sep="",collapse=""),
-                            "\"",sep=""),
-                      "cn.bgi.MascotParser",
-                      collapse=" ",sep=" ");
-            alignment=0;
-        }
-        if(regm[1]!=-1)
-        {
-            ph<-paste(.java.executable(),paste("-Xmx",xmx,"G",sep=""),"-cp",
-                      paste("\"",
-                            paste(system.file("parser4PGA.jar",
-                                              package="PGA"),sep="",collapse=""),
-                            "\"",sep=""),
-                      "cn.bgi.mzIDparser",
-                      collapse=" ",sep=" ");
-            alignment=0;
-        }
+    if(regd[1]!=-1){
+        alignment=0
     }
-
     if(regm[1]!=-1){
-
-        tandemparser=paste(ph,
-                           paste("\"",file,"\"",sep=""),
-                           paste("\"",db,"\"",sep=""),
-                           paste("\"",prefix,"\"",sep=""),
-                           paste("\"",outdir,"\"",sep=""),
-                           paste('"',decoyPrefix,'"',sep=""),
-                           paste('"',novelPrefix,'"',sep=""),
-                           alignment,
-                           thread,
-                           msfile,
-                           fdr,
-                           collapse=" ",sep=" ")
-    }else{
-
-        tandemparser=paste(ph,
-                           paste("\"",file,"\"",sep=""),
-                           paste("\"",db,"\"",sep=""),
-                           paste("\"",prefix,"\"",sep=""),
-                           paste("\"",outdir,"\"",sep=""),
-                           paste('"',decoyPrefix,'"',sep=""),
-                           paste('"',novelPrefix,'"',sep=""),
-                           alignment,
-                           thread,
-                           fdr,
-                           collapse=" ",sep=" ")
+        alignment=0
     }
+      
+    fdrargs=c(paste("-Xmx",ifelse(is.null(xmx),"",paste(xmx,"G",sep="")),sep=""),
+              "-jar",
+              paste(system.file("parser4PGA.jar",
+                                package="PGA"),sep="",collapse=""),
+              "-i",file,
+              "-d",db,
+              "-decoy",decoyPrefix,
+              "-novel",novelPrefix,
+              "-r",alignment,
+              "-o",outdir,
+              "-prefix",prefix,
+              "-fdr",fdr,
+              "-verbose",verbose)
+    
+    if(!is.null(msfile)){
+        fdrargs <- c(fdrargs,
+                     "-ms",msfile)
+    }
+    
+    outfile=processx::run(.java.executable(),fdrargs,spinner = TRUE,
+                          echo_cmd = ifelse(verbose==1,FALSE,TRUE),echo = TRUE)
 
 
-    #cat(tandemparser)
-    outfile=system(command=tandemparser,intern=TRUE)
 }
 
 
@@ -315,3 +245,124 @@ check_parser=function(){
     return(file.exists(f))
 
 }
+
+#' @title Perform global or separate FDR estimation
+#' @description Perform global or separate FDR estimation
+#' @param psmfile PSM file in TSV format
+#' @param db A FASTA format database file used for MS/MS searching.
+#' @param fdr FDR cutoff, default is 0.01
+#' @param peptide_level Peptide level FDR, default is FALSE
+#' @param decoyPrefix The prefix of decoy sequences ID. Default is "###REV###".
+#' "###REV###" is the prefix which used by function \code{dbCreator}.
+#' @param novelPrefix The prefix of novel protein ID. Default is NULL. If the 
+#' value is NULL, it will perform global FDR estimation. Otherwise, it will 
+#' perform separate FDR estimation for novel peptides.
+#' @param better_score_lower TRUE: lower score is better, FALSE: higher score is better.
+#' Default is TRUE.
+#' @param remap TRUE: re-map peptide to protein, 
+#' FALSE: use the peptide protein mapping data in the PSM file. Default is FALSE.
+#' @param out_dir Output directory.
+#' @param protein_inference Whether or not to perform protein inference. Default is 
+#' FALSE
+#' @param score_t Score transformation for score distribution plot. 
+#' 0: no transformation, 1: -log(score).
+#' @param xmx The maximum Java heap size. The unit is "G". Default is 2.
+#' @param verbose Output level. Default is 1.
+#' @export
+#' @return none
+calculateFDR=function(psmfile=NULL,db=NULL,fdr=0.01,
+                      peptide_level=FALSE,
+                      decoyPrefix="###REV###",
+                      novelPrefix=NULL,
+                      better_score_lower=TRUE,
+                      remap=FALSE,
+                      out_dir="./",
+                      protein_inference=FALSE,
+                      score_t = 1,
+                      xmx=2,
+                      verbose=1){
+    
+    if(is.null(novelPrefix)){
+        cat("Global FDR estimation ...\n")
+        novelPrefix <- "ABCDEFGXXXXXABCDEFG"
+    }else{
+        cat("Separate FDR estimation ...\n")
+    }
+    
+    if(peptide_level==TRUE){
+        psm <- read.delim(psmfile,stringsAsFactors = FALSE)
+        if(better_score_lower==TRUE){
+            psm <- psm %>% group_by(peptide) %>% arrange(score) %>% filter(row_number()==1)    
+        }else{
+            psm <- psm %>% group_by(peptide) %>% arrange(desc(score)) %>% filter(row_number()==1)    
+        }
+        psmfile <- paste(out_dir,"/peptide_psm.tsv",sep = "")
+        psm %>% write_tsv(path = psmfile)
+        cat("Peptide level FDR input:",psmfile,"\n")
+    }else{
+        cat("PSM level FDR input:",psmfile,"\n")
+    }
+    
+    fdrargs=c(paste("-Xmx",xmx,"G",sep=""),
+              "-cp",
+              paste(system.file("parser4PGA.jar",
+                                package="PGA"),sep="",collapse=""),
+              "FDRcalculator",  
+              "-i",psmfile,
+              "-d",db,
+              "-decoy",decoyPrefix,
+              "-novel",novelPrefix,
+              "-s",ifelse(better_score_lower,1,0),
+              "-r",ifelse(remap,1,0),
+              "-o",out_dir,
+              "-fdr",fdr,
+              "-p",ifelse(protein_inference,1,0),
+              "-verbose",verbose)
+    
+    outfile=processx::run(.java.executable(),fdrargs,spinner = TRUE,
+                          echo_cmd = ifelse(verbose==1,FALSE,TRUE),echo = TRUE)
+    
+    ## summary
+    o_psm_file <- paste(out_dir,"/pga-peptideSummary.txt",sep="")
+    psm <- read.delim(o_psm_file,stringsAsFactors = FALSE)
+    n_psm <- psm %>% filter(isdecoy=="false") %>% nrow
+    n_pep <- psm %>% filter(isdecoy=="false") %>% select(peptide) %>% 
+        distinct() %>% nrow
+    # novel PSM
+    n_psm_novel <- psm %>% filter(isdecoy=="false",isSAP=="true") %>% nrow
+    n_pep_novel <- psm %>% filter(isdecoy=="false",isSAP=="true") %>% 
+        select(peptide) %>% 
+        distinct() %>% nrow
+    cat("Total identified PSMs:",n_psm,"\n")
+    cat("Total identified Peptides:",n_pep,"\n")
+    cat("Total identified novel PSMs:",n_psm_novel,"\n")
+    cat("Total identified novel peptides:",n_pep_novel,"\n")
+    
+    ## score plot
+    if(n_psm_novel >= 10){
+        score_fig <- paste(out_dir,"/score_plot.pdf",sep = "")
+        cat("Score distribution:",score_fig,"\n")
+        pdf(score_fig,width = 5,height = 5)
+        psm$isSAP <- ifelse(psm$isSAP=="false","Canonical peptides",
+                            "Novel peptides")
+        if(score_t == 1){
+            psm$evalue <- -log(psm$evalue)
+        }
+        gg <- psm %>% filter(isdecoy=="false") %>% 
+            ggplot(aes(x=evalue,color=isSAP)) +
+            geom_density()+
+            guides(color=guide_legend(title="Peptide"))+
+            scale_color_manual(values=c("black","red"))+
+            theme(legend.justification = c(1, 1), legend.position = c(1, 1))
+        if(score_t == 1){
+            gg <- gg + xlab("-log(score)")
+        }
+        print(gg)
+        dev.off()
+    }
+    
+}
+
+
+
+

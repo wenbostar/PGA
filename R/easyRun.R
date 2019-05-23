@@ -101,7 +101,7 @@ easyRun=function(gtfFile=NULL,vcfFile=NULL,bedFile=NULL,spectra=NULL,
     #cat(xml.path,"\n")
     cat("Stage 3. Post-processing.\n")
     #save(xml.path,var_tag,decoy_tag,db.files,outPrefix,iddir,alignment,xmx,file="t.rda")
-    parserGear(file=xml.path, novelPrefix= var_tag, fdr = fdr,
+    parserGear(file=xml.path, novelPrefix= var_tag,fdr = fdr,
                decoyPrefix = decoy_tag, db=db.files, prefix=outPrefix, 
                outdir=iddir, alignment=alignment, xmx=xmx)
     

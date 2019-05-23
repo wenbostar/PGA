@@ -32,7 +32,10 @@ Imports:
     ggplot2,
     AnnotationDbi,
     customProDB (>= 1.21.5),
-    pheatmap
+    pheatmap,
+    dplyr,
+    processx,
+    readr
 Suggests:
     RMariaDB,
     BSgenome.Hsapiens.UCSC.hg19,

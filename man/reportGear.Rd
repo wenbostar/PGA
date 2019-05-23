@@ -42,4 +42,3 @@ parserGear(file = idfile, db = dbfile, decoyPrefix="#REV#",xmx=1,thread=8,
 reportGear(parser_dir = "parser_outdir", tab_dir = outfile_path,
            report_dir = "report")
 }
-

@@ -44,4 +44,3 @@ PrepareAnnotationEnsembl2(mart=ensembl, annotation_path=annotation_path,
 \seealso{
 \code{\link{PrepareAnnotationRefseq2}}.
 }
-
