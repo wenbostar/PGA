@@ -408,7 +408,7 @@
     df$ID=as.character(df$ID)
     
     ggobj <- ggplot(df,aes(ID,Freq))+
-        geom_bar(aes(fill=ID,position="dodge"),stat="identity")+
+        geom_bar(aes(fill=ID),position="dodge",stat="identity")+
         theme_bw()+
         geom_text(aes(label=Freq), 
                   position=position_dodge(width=0.9), 
@@ -448,7 +448,7 @@
     df$Type[df$Type=="connect two regions overlaped with known exons"]="connect two regions\noverlaped with known exons"
     
     ggobj <- ggplot(df,aes(Type,Freq))+
-        geom_bar(aes(fill=Type,position="dodge"),stat="identity")+
+        geom_bar(aes(fill=Type),position="dodge",stat="identity")+
         theme_bw()+
         geom_text(aes(label=Freq), position=position_dodge(width=0.9), 
                   vjust=0.5,hjust=-0.1,angle=90)+ylim(0,1.2*max(df$Freq))+
@@ -474,7 +474,7 @@
     
     
     ggobj <- ggplot(df,aes(Type,Freq))+
-        geom_bar(aes(fill=Type,position="dodge"),stat="identity")+
+        geom_bar(aes(fill=Type),position="dodge",stat="identity")+
         theme_bw()+
         geom_text(aes(label=Freq), position=position_dodge(width=0.9), 
                   vjust=0.5,hjust=-0.1,angle=90)+ylim(0,1.2*max(df$Freq))+
@@ -496,7 +496,7 @@
     colnames(df)<-c("MutNum","Freq")
     
     ggobj <- ggplot(df,aes(MutNum,Freq))+
-        geom_bar(aes(fill=MutNum,position="dodge"),stat="identity")+
+        geom_bar(aes(fill=MutNum),position="dodge",stat="identity")+
         theme_bw()+
         geom_text(aes(label=Freq), position=position_dodge(width=0.9), 
                   vjust=0.5,hjust=-0.1,angle=90)+ylim(0,1.2*max(df$Freq))+
