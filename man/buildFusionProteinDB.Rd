@@ -39,5 +39,5 @@ Create customized protein database from fusion events
 \examples{
 fusion_file <- system.file("extdata/fusion/", "star-fusion_example_input.tsv",package="PGA")
 # This example input was downloaded from STAR-Fusion website (https://github.com/STAR-Fusion/STAR-Fusion/wiki)
-buildFusionProteinDB(fusion_file,genome_version="hg19")
+res <- buildFusionProteinDB(fusion_file,genome_version="hg19")
 }

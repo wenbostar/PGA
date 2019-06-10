@@ -312,19 +312,20 @@ buildFusionProteinDB=function(x, species="Homo sapiens",genome_version="hg38",
                               max_nt=100,out_dir="./",prefix="fusion",
                               translating_method="six_frame",
                               min_aa_length=10){
+    
     if(species == "Homo sapiens"){
         if(genome_version == "hg38"){
             if (!requireNamespace("BSgenome.Hsapiens.UCSC.hg38", quietly = TRUE)){
                 BiocManager::install("BSgenome.Hsapiens.UCSC.hg38")
             }
             library("BSgenome.Hsapiens.UCSC.hg38")
-            genome<-Hsapiens
+            genome <- Hsapiens
         }else if(genome_version == "hg19"){
             if (!requireNamespace("BSgenome.Hsapiens.UCSC.hg19", quietly = TRUE)){
                 BiocManager::install("BSgenome.Hsapiens.UCSC.hg19")
             }
             library("BSgenome.Hsapiens.UCSC.hg19")
-            genome<-Hsapiens
+            genome <- Hsapiens
         }else{
             stop(paste("Currently, we don't support genome version:", genome_version,"\n",sep=""))
         }
@@ -335,6 +336,10 @@ buildFusionProteinDB=function(x, species="Homo sapiens",genome_version="hg38",
     # the max length of flanking DNA sequence
     nalen <- max_nt
     dat <- read.delim(x,stringsAsFactors = FALSE,check.names = FALSE)
+    if(!any(str_detect(dat$LeftBreakpoint, pattern = "^chr"))){
+        dat$LeftBreakpoint <- paste("chr",dat$LeftBreakpoint,sep="")
+        dat$RightBreakpoint <- paste("chr",dat$RightBreakpoint,sep="")
+    }
     out <- dat %>% rowwise %>% 
         mutate(LeftNaSeq=.left_seq_extract(LeftBreakpoint,nalen,genome)) %>% 
         mutate(RightNaSeq=.right_seq_extract(RightBreakpoint,nalen,genome)) %>% 
@@ -357,7 +362,6 @@ buildFusionProteinDB=function(x, species="Homo sapiens",genome_version="hg38",
     res$fusion_protein_ID <- paste("fusion",res$fusion_ID,res$protein_frame,res$protein_pos,sep="_")
     pro_db_file <- paste(out_dir,"/",prefix,"-fusion.fasta",sep = "")
     cat("Fusion protein db:",pro_db_file,"\n")
-    save(res,pro_db_file,file="x.rda")
     write.fasta(sequences = res$protein %>% as.list,names = res$fusion_protein_ID,
                 file.out = pro_db_file, nbchar = 10000000000,as.string = TRUE)
     
