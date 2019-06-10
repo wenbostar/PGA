@@ -355,7 +355,7 @@ buildFusionProteinDB=function(x, species="Homo sapiens",genome_version="hg38",
     if(sum(valid_chr) == 0){
         stop("No valid fusion event!")
     }else{
-        dat <- dat[valid_chr]
+        dat <- dat[valid_chr,]
     }
     
     out <- dat %>% rowwise %>% 
