@@ -35,7 +35,8 @@ Imports:
     pheatmap,
     dplyr,
     processx,
-    readr
+    readr,
+    seqinr
 Suggests:
     RMariaDB,
     BSgenome.Hsapiens.UCSC.hg19,
@@ -53,3 +54,4 @@ biocViews: Proteomics,
     ReportWriting,
     RNASeq,
     Sequencing
+RoxygenNote: 6.1.1

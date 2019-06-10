@@ -237,3 +237,230 @@ buildTargetDecoyDB=function(db,cont_file=NULL,decoyPrefix="###REV###",
                           echo_cmd = ifelse(verbose==1,FALSE,TRUE),echo = TRUE)
     
 }
+
+# for fusion events
+.left_seq_extract=function(string, nalen,genome){
+    lst<-unlist(strsplit(string,":"))
+    strand=lst[3]
+    if(strand=="+"){
+        fgRange<-GRanges(seqnames=lst[1],
+                         ranges=IRanges(start=(as.numeric(lst[2])-(nalen-1)),
+                                        end=(as.numeric(lst[2]))),
+                         strand=lst[3],
+                         junction_id="left")
+        fgseq <- getSeq(genome, fgRange)
+        seq<-as.character(fgseq)
+    }else{
+        fgRange<-GRanges(seqnames=lst[1],
+                         ranges=IRanges(start=(as.numeric(lst[2])),
+                                        end=(as.numeric(lst[2])+(nalen-1))),
+                         strand=lst[3],
+                         junction_id="left")
+        fgseq <- getSeq(genome, fgRange)
+        seq<-as.character(fgseq)
+    }
+    
+    return(seq)
+}
+
+# for fusion events
+.right_seq_extract=function(string, nalen,genome){
+    lst<-unlist(strsplit(string,":"))
+    strand=lst[3]
+    if(strand=="-"){
+        fgRange<-GRanges(seqnames=lst[1],
+                         ranges=IRanges(start=(as.numeric(lst[2])-(nalen-1)),
+                                        end=(as.numeric(lst[2]))),
+                         strand=lst[3],
+                         junction_id="left")
+        fgseq <- getSeq(genome, fgRange)
+        seq<-as.character(fgseq)
+    }else{
+        fgRange<-GRanges(seqnames=lst[1],
+                         ranges=IRanges(start=(as.numeric(lst[2])),
+                                        end=(as.numeric(lst[2])+(nalen-1))),
+                         strand=lst[3],
+                         junction_id="left")
+        fgseq <- getSeq(genome, fgRange)
+        seq<-as.character(fgseq)
+    }
+    
+    return(seq)
+}
+
+##' @title Create customized protein database from fusion events
+##' @description Create customized protein database from fusion events
+##' @param x A tsv format file which contains fusion events.
+##' @param species Species, default is "Homo sapiens"
+##' @param genome_version Genome version, default is "hg38"
+##' @param fusion_method Fusion calling method, default is "STAR-Fusion"
+##' @param max_nt The max length of DNA sequences to be extracted for each side,
+##' default is 60
+##' @param out_dir Output directory
+##' @param prefix The prefix of output files
+##' @param translating_method Translating DNA to protein (six_frame,three_frame,
+##' longest), default is six_frame.
+##' @param min_aa_length The minimum length of proteins, default is 10 aa.
+##' @export
+##' @return The database file
+##' @examples 
+##' fusion_file <- system.file("extdata/fusion/", "star-fusion_example_input.tsv",package="PGA")
+##' # This example input was downloaded from STAR-Fusion website (https://github.com/STAR-Fusion/STAR-Fusion/wiki)
+##' res <- buildFusionProteinDB(fusion_file,genome_version="hg19")
+buildFusionProteinDB=function(x, species="Homo sapiens",genome_version="hg38",
+                              fusion_method="STAR-Fusion",
+                              max_nt=100,out_dir="./",prefix="fusion",
+                              translating_method="six_frame",
+                              min_aa_length=10){
+    if(species == "Homo sapiens"){
+        if(genome_version == "hg38"){
+            if (!requireNamespace("BSgenome.Hsapiens.UCSC.hg38", quietly = TRUE)){
+                BiocManager::install("BSgenome.Hsapiens.UCSC.hg38")
+            }
+            library("BSgenome.Hsapiens.UCSC.hg38")
+            genome<-Hsapiens
+        }else if(genome_version == "hg19"){
+            if (!requireNamespace("BSgenome.Hsapiens.UCSC.hg19", quietly = TRUE)){
+                BiocManager::install("BSgenome.Hsapiens.UCSC.hg19")
+            }
+            library("BSgenome.Hsapiens.UCSC.hg19")
+            genome<-Hsapiens
+        }else{
+            stop(paste("Currently, we don't support genome version:", genome_version,"\n",sep=""))
+        }
+    }else{
+        stop(paste("Currently, we don't support species:", species,"\n",sep=""))
+    }
+    
+    # the max length of flanking DNA sequence
+    nalen <- max_nt
+    dat <- read.delim(x,stringsAsFactors = FALSE,check.names = FALSE)
+    out <- dat %>% rowwise %>% 
+        mutate(LeftNaSeq=.left_seq_extract(LeftBreakpoint,nalen,genome)) %>% 
+        mutate(RightNaSeq=.right_seq_extract(RightBreakpoint,nalen,genome)) %>% 
+        mutate(fusionSeq=paste(LeftNaSeq,RightNaSeq,sep="")) %>% ungroup()
+    
+    ## translate DNA to protein
+    save(out,translating_method,min_aa_length,file="x.rda")
+    cat("Translating method:",translating_method,"\n")
+    cat("Min length of protein sequence:",min_aa_length,"\n")
+    out$fusion_ID <- 1:nrow(out)
+    res <- lapply(out$fusion_ID, function(i){
+        dd <- .translate_dna2protein(out$fusionSeq[i],
+                                     translating_method = translating_method, 
+                                     min_aa_length=min_aa_length)
+        dd$fusion_ID <- i
+        return(dd)
+    })
+    res <- bind_rows(res)
+    res <- merge(out,res,by="fusion_ID")
+    res$fusion_protein_ID <- paste("fusion",res$fusion_ID,res$protein_frame,res$protein_pos,sep="_")
+    pro_db_file <- paste(out_dir,"/",prefix,"-fusion.fasta",sep = "")
+    cat("Fusion protein db:",pro_db_file,"\n")
+    save(res,pro_db_file,file="x.rda")
+    write.fasta(sequences = res$protein %>% as.list,names = res$fusion_protein_ID,
+                file.out = pro_db_file, nbchar = 10000000000,as.string = TRUE)
+    
+    tab_file <- paste(out_dir,"/",prefix,"-fusion.tsv",sep = "")
+    cat("Fusion protein table:",tab_file,"\n")
+    write_tsv(res,tab_file)
+    
+    return(res)
+}
+
+
+.translate_dna2protein=function(dna,translating_method="six_frame",
+                                min_aa_length=10){
+    
+    if(translating_method == "six_frame"){
+        DNA_str <- DNAString(dna)
+        
+        pep_f1 <- DNA_str %>% .translate_dna(min_aa_length=min_aa_length) %>%
+            mutate(protein_frame="F1")
+        pep_f2 <- subseq(DNA_str,start=2) %>% .translate_dna(min_aa_length=min_aa_length) %>%
+            mutate(protein_frame="F2")
+        pep_f3 <- subseq(DNA_str,start=3) %>% .translate_dna(min_aa_length=min_aa_length) %>%
+            mutate(protein_frame="F3")
+        
+        DNA_str_rev<-reverseComplement(DNA_str)
+        pep_r1 <- DNA_str_rev %>% .translate_dna(min_aa_length=min_aa_length) %>%
+            mutate(protein_frame="R1")
+        pep_r2 <- subseq(DNA_str_rev,start=2) %>% .translate_dna(min_aa_length=min_aa_length) %>%
+            mutate(protein_frame="R2")
+        pep_r3 <- subseq(DNA_str_rev,start=3) %>% .translate_dna(min_aa_length=min_aa_length) %>%
+            mutate(protein_frame="R3")
+        
+        res <- rbind(pep_f1,pep_f2) %>% 
+            rbind(pep_f3) %>% 
+            rbind(pep_r1) %>% 
+            rbind(pep_r2) %>% 
+            rbind(pep_r3)
+        
+    }else if(translating_method == "three_frame"){
+        pep_f1 <- DNA_str %>% .translate_dna(min_aa_length=min_aa_length) %>%
+            mutate(protein_frame="F1")
+        pep_f2 <- subseq(DNA_str,start=2) %>% .translate_dna(min_aa_length=min_aa_length) %>%
+            mutate(protein_frame="F2")
+        pep_f3 <- subseq(DNA_str,start=3) %>% .translate_dna(min_aa_length=min_aa_length) %>%
+            mutate(protein_frame="F3")
+        
+        res <- rbind(pep_f1,pep_f2) %>% rbind(pep_f3)
+    }else if(translating_method == "longest"){
+        DNA_str <- DNAString(dna)
+        
+        pep_f1 <- DNA_str %>% .translate_dna(min_aa_length=min_aa_length) %>%
+            mutate(protein_frame="F1")
+        pep_f2 <- subseq(DNA_str,start=2) %>% .translate_dna(min_aa_length=min_aa_length) %>%
+            mutate(protein_frame="F2")
+        pep_f3 <- subseq(DNA_str,start=3) %>% .translate_dna(min_aa_length=min_aa_length) %>%
+            mutate(protein_frame="F3")
+        
+        DNA_str_rev<-reverseComplement(DNA_str)
+        pep_r1 <- DNA_str_rev %>% .translate_dna(min_aa_length=min_aa_length) %>%
+            mutate(protein_frame="R1")
+        pep_r2 <- subseq(DNA_str_rev,start=2) %>% .translate_dna(min_aa_length=min_aa_length) %>%
+            mutate(protein_frame="R2")
+        pep_r3 <- subseq(DNA_str_rev,start=3) %>% .translate_dna(min_aa_length=min_aa_length) %>%
+            mutate(protein_frame="R3")
+        
+        res <- rbind(pep_f1,pep_f2) %>% 
+            rbind(pep_f3) %>% 
+            rbind(pep_r1) %>% 
+            rbind(pep_r2) %>% 
+            rbind(pep_r3) 
+        max_len_protein <- max(nchar(res$protein))
+        res <- res %>% filter(nchar(protein) == max_len_protein)
+        
+    }else{
+        stop(paste("Currently, we don't support the translation method:",translating_method,"\n",sep=""))
+    }
+    return(res)
+}
+
+
+.extract_peptides=function(aa,min_aa_length=10){
+    peps <- str_split(as.character(aa),pattern ="\\*") %>% unlist
+    pep_pos <- numeric(length(peps))
+    cur_pos = 0
+    for(i in 1:length(peps)){
+        pep_pos[i] <- cur_pos + 1
+        cur_pos <- pep_pos[i] + nchar(peps[i])
+    }
+    res <- data.frame(raw_protein=as.character(aa),
+                      protein=peps,
+                      protein_pos=pep_pos,
+                      stringsAsFactors = FALSE) %>%
+        filter(nchar(protein) >= min_aa_length)
+    
+    ## a data.frame with columns: protein protein_pos
+    return(res)
+}
+
+## directly translate a DNA sequence to protein
+.translate_dna=function(dna,min_aa_length=10){
+    aa <- suppressWarnings(translate(dna,if.fuzzy.codon="solve"))
+    res <- .extract_peptides(aa)
+    return(res)
+}
+
+
