@@ -340,10 +340,30 @@ buildFusionProteinDB=function(x, species="Homo sapiens",genome_version="hg38",
         dat$LeftBreakpoint <- paste("chr",dat$LeftBreakpoint,sep="")
         dat$RightBreakpoint <- paste("chr",dat$RightBreakpoint,sep="")
     }
+    
+    ## remove items whoes chromosome are not present in genome
+    left_chr <- str_split(dat$LeftBreakpoint,pattern = ":") %>% sapply(function(chr){chr[1]})
+    right_chr <- str_split(dat$RightBreakpoint,pattern = ":") %>% sapply(function(chr){chr[1]})
+    
+    left_chr_valid <- left_chr %in% names(genome)
+    right_chr_valid <- right_chr %in% names(genome)
+    cat("Total fusion events:",nrow(dat),"\n")
+    cat("Invalid chr for left gene:",sum(!left_chr_valid),"\n")
+    cat("Invalid chr for right gene:",sum(!right_chr_valid),"\n")
+    cat("Invalid chr for left or right gene:",sum(!(left_chr_valid & right_chr_valid)),"\n")
+    valid_chr <- left_chr_valid & right_chr_valid
+    if(sum(valid_chr) == 0){
+        stop("No valid fusion event!")
+    }else{
+        dat <- dat[valid_chr]
+    }
+    
     out <- dat %>% rowwise %>% 
         mutate(LeftNaSeq=.left_seq_extract(LeftBreakpoint,nalen,genome)) %>% 
         mutate(RightNaSeq=.right_seq_extract(RightBreakpoint,nalen,genome)) %>% 
         mutate(fusionSeq=paste(LeftNaSeq,RightNaSeq,sep="")) %>% ungroup()
+    
+    
     
     ## translate DNA to protein
     cat("Translating method:",translating_method,"\n")
