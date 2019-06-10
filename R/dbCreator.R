@@ -352,7 +352,8 @@ buildFusionProteinDB=function(x, species="Homo sapiens",genome_version="hg38",
     cat("Invalid chr for right gene:",sum(!right_chr_valid)," => ",paste(dat$RightBreakpoint[!right_chr_valid],collapse = ","),"\n")
     cat("Invalid chr for left or right gene:",sum(!(left_chr_valid & right_chr_valid))," => ","\n")
     if(sum(!(left_chr_valid & right_chr_valid)) >= 1){
-        print(dat[!(left_chr_valid & right_chr_valid),])
+        invalid_to_file <- paste(out_dir,"/",prefix,"-fusion-invalid.tsv",sep = "")
+        dat[!(left_chr_valid & right_chr_valid),] %>% write_tsv(invalid_to_file)
     }
     valid_chr <- left_chr_valid & right_chr_valid
     if(sum(valid_chr) == 0){
