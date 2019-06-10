@@ -339,6 +339,12 @@ buildFusionProteinDB=function(x, species="Homo sapiens",genome_version="hg38",
     if(!any(str_detect(dat$LeftBreakpoint, pattern = "^chr"))){
         dat$LeftBreakpoint <- paste("chr",dat$LeftBreakpoint,sep="")
         dat$RightBreakpoint <- paste("chr",dat$RightBreakpoint,sep="")
+        
+        ## chrMT -> chrM
+        if("chrM" %in% names(genome) && !("chrMT" %in% names(genome))){
+            dat$LeftBreakpoint <- str_replace(dat$LeftBreakpoint,pattern = "^chrMT",replacement = "chrM")
+            dat$RightBreakpoint <- str_replace(dat$RightBreakpoint,pattern = "^chrMT",replacement = "chrM")
+        }
     }
     
     ## remove items whoes chromosome are not present in genome
