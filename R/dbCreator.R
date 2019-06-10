@@ -348,9 +348,12 @@ buildFusionProteinDB=function(x, species="Homo sapiens",genome_version="hg38",
     left_chr_valid <- left_chr %in% names(genome)
     right_chr_valid <- right_chr %in% names(genome)
     cat("Total fusion events:",nrow(dat),"\n")
-    cat("Invalid chr for left gene:",sum(!left_chr_valid),"\n")
-    cat("Invalid chr for right gene:",sum(!right_chr_valid),"\n")
-    cat("Invalid chr for left or right gene:",sum(!(left_chr_valid & right_chr_valid)),"\n")
+    cat("Invalid chr for left gene:",sum(!left_chr_valid)," => ",paste(dat$LeftBreakpoint[!left_chr_valid],collapse = ","),"\n")
+    cat("Invalid chr for right gene:",sum(!right_chr_valid)," => ",paste(dat$RightBreakpoint[!right_chr_valid],collapse = ","),"\n")
+    cat("Invalid chr for left or right gene:",sum(!(left_chr_valid & right_chr_valid))," => ","\n")
+    if(sum(!(left_chr_valid & right_chr_valid)) >= 1){
+        print(dat[!(left_chr_valid & right_chr_valid),])
+    }
     valid_chr <- left_chr_valid & right_chr_valid
     if(sum(valid_chr) == 0){
         stop("No valid fusion event!")
