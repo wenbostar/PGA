@@ -733,8 +733,10 @@ PrepareAnnotationRefseq2 <- function(genome='hg19', CDSfasta, pepfasta,
 
     query_refGene <- ucscTableQuery(session, "refSeqComposite", table="refGene")
     refGene <- getTable(query_refGene)
-    refGene <- subset(refGene, name %in% transcript_ids)
-    
+	if(!is.null(transcript_ids))
+	{
+    	refGene <- subset(refGene, name %in% transcript_ids)
+	}
     reflink <- .UCSC_dbselect("hgFixed", "refLink")
     ids <- subset(reflink, mrnaAcc %in% refGene[, 'name'], select = name:protAcc)
     colnames(ids) <- c('gene_name', 'description', 'tx_name', 'pro_name')
