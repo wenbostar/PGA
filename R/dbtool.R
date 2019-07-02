@@ -387,6 +387,7 @@ OutputVarproseq2 <- function(vartable, proteinseq, outfa, outmtab, ids, lablersi
 PrepareAnnotationEnsembl2 <- function(mart, annotation_path, 
                                       splice_matrix=FALSE, dbsnp=NULL, 
                                       transcript_ids=NULL, COSMIC=FALSE,...) {
+    dir.create(annotation_path,showWarnings = FALSE)
     options(stringsAsFactors=FALSE)
     dataset <- biomaRt:::martDataset(mart)
     biomart <- biomaRt:::martBM(mart)
