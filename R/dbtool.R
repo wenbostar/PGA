@@ -718,6 +718,7 @@ PrepareAnnotationRefseq2 <- function(genome='hg19', CDSfasta, pepfasta,
                                      annotation_path, dbsnp=NULL, 
                                      transcript_ids=NULL, splice_matrix=FALSE, 
                                      COSMIC=FALSE, ...) {
+    dir.create(annotation_path,showWarnings = FALSE)
     options(stringsAsFactors=FALSE)
     session  <- browserSession()
     genome(session) <- genome
