@@ -27,5 +27,11 @@ RUN echo "R_LIBS=/usr/local/lib/R/host-site-library:\${R_LIBS}" > /usr/local/lib
 RUN echo "R_LIBS_USER=''" >> /usr/local/lib/R/etc/Renviron.site
 RUN echo "options(defaultPackages=c(getOption('defaultPackages'),'BiocManager'))" >> /usr/local/lib/R/etc/Rprofile.site
 
-CMD ["R"]
+RUN chmod -R 755 /opt/
+
+#change working directory
+WORKDIR /opt/
+
+#specify the command executed when the container is started
+CMD ["/bin/bash"]
 
