@@ -1,4 +1,4 @@
-FROM bioconductor/release_base2
+FROM bioconductor/release_base2:R3.6.2_Bioc3.10
 
 
 MAINTAINER wenbostar@gmail.com
