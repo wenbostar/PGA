@@ -23,7 +23,7 @@
 - [x] Use the GATK best practices to produce the `vcf` file
 You can then follow the tutorial below on how to generate the custome database and sequence searching using one of the search eingines specified above
 
-[RNAseq workflow](https://github.com/javanOkendo/PGA/blob/master/workflow.PNG)
+![RNAseq workflow](https://github.com/javanOkendo/PGA/blob/master/workflow.PNG)
 > Example of the RNAseq workflow which you can use for your data. It employs the use of GATK best practices
 ---
 Please read this document to find how to use PGA: [PGA tutorial](http://bioconductor.org/packages/devel/bioc/vignettes/PGA/inst/doc/PGA.pdf). If you have any questions about PGA, please open an issue here: [open an issue](https://github.com/wenbostar/PGA/issues).
