@@ -6,12 +6,12 @@ Tab2Range <- function(tabfile)
 	jun <- read.table(tabfile, sep='\t', header=F, stringsAsFactors=F)
 
 	#replace the strand "." with "+" and "-".
-	tmp<-jun[jun$V4==".",]
-	tmp_forward<-tmp
-	tmp_reverse<-tmp
-	tmp_forward$V4<-"+"
-	tmp_reverse$V4<-"-"
-	jun<-rbind(jun[jun$V4!=".",],tmp_forward,tmp_reverse)
+	#tmp<-jun[jun$V4==".",]
+	#tmp_forward<-tmp
+	#tmp_reverse<-tmp
+	#tmp_forward$V4<-"+"
+	#tmp_reverse$V4<-"-"
+	#jun<-rbind(jun[jun$V4!=".",],tmp_forward,tmp_reverse)
 
 	part1_sta <- as.numeric(jun[,'V2'])+1-59
 	part1_end <- as.numeric(jun[,'V2'])+1
