@@ -1,3 +1,7 @@
+Version 1.15.2
+
+o set2key, set2keyv, and key2 of data.table were deprecated and had been removed.
+
 Version 1.15.1
 
 o Implementation for the protein database construction from fusion events(buildFusionProteinDB). Currently, this function only supports the calling result from STAR-fusion.
