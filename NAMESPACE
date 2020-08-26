@@ -1,4 +1,4 @@
-importFrom(data.table,"%between%", "%chin%", "%like%", ":=",  as.data.table, between, chgroup, chmatch, chorder, CJ, copy, data.table, dcast, dcast.data.table, foverlaps,fread, haskey, key, "key<-", key2, last, like,melt, set, set2key, set2keyv, setattr, setDF, setDT, setkey, setkeyv, setnames,  setorder, setorderv)
+importFrom(data.table,"%between%", "%chin%", "%like%", ":=",  as.data.table, between, chgroup, chmatch, chorder, CJ, copy, data.table, dcast, dcast.data.table, foverlaps,fread, haskey, key, "key<-", last, like,melt, set, setattr, setDF, setDT, setkey, setkeyv, setnames,  setorder, setorderv)
 importFrom("grDevices", "colorRampPalette", "dev.off", "pdf", "png",
              "rainbow")
 importFrom("graphics", "abline", "axTicks", "axis", "barplot", "box",
