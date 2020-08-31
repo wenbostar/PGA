@@ -1,3 +1,8 @@
+Version 1.15.3
+
+Add three modified functions from customProDB to temporary resolve the error:
+"Download and preprocess the 'chrominfo' data frame ... FAILED! (=> skipped)"
+
 Version 1.15.2
 
 o set2key, set2keyv, and key2 of data.table were deprecated and had been removed.
