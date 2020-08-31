@@ -451,7 +451,8 @@ PrepareAnnotationEnsembl2 <- function(mart, annotation_path,
     tr_coding <- subset(ids, pro_name != "")  
     tr_noncoding <- subset(ids, pro_name == "")
     
-    txdb<- customProDB:::makeTranscriptDbFromBiomart_archive(biomart=biomart, 
+    #txdb<- customProDB:::makeTranscriptDbFromBiomart_archive(biomart=biomart, 
+    txdb<- makeTranscriptDbFromBiomart_archive2(biomart=biomart, 
                                                 dataset=dataset, 
                                                 host=host, 
                                                 path="/biomart/martservice", 
