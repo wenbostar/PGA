@@ -1,3 +1,7 @@
+Version 1.15.4
+
+Remove the redundant entry in OutputVarproseq2!
+
 Version 1.15.3
 
 Add three modified functions from customProDB to temporary resolve the error:
