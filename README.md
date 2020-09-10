@@ -1,5 +1,4 @@
 [![Build Status](https://travis-ci.org/wenbostar/PGA.svg?branch=master)](https://travis-ci.org/wenbostar/PGA) 
-![Github Releases](https://img.shields.io/github/downloads/wenbostar/PGA/latest/total.svg)
 [![HitCount](http://hits.dwyl.io/wenbostar/PGA.svg)](http://hits.dwyl.io/wenbostar/PGA)
 
 
