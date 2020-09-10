@@ -1,6 +1,4 @@
 [![Build Status](https://travis-ci.org/wenbostar/PGA.svg?branch=master)](https://travis-ci.org/wenbostar/PGA) 
-[![Bioconductor release build Status](http://bioconductor.org/shields/build/release/bioc/PGA.svg)](http://bioconductor.org/packages/release/bioc/html/PGA.html) 
-[![Bioconductor devel build Status](http://bioconductor.org/shields/build/devel/bioc/PGA.svg)](http://bioconductor.org/packages/devel/bioc/html/PGA.html) 
 ![Github Releases](https://img.shields.io/github/downloads/wenbostar/PGA/latest/total.svg)
 [![HitCount](http://hits.dwyl.io/wenbostar/PGA.svg)](http://hits.dwyl.io/wenbostar/PGA)
 
@@ -30,18 +28,7 @@ More about [PGA](https://github.com/wenbostar/PGA/wiki).
 
 ## Installation
 
-To install *[PGA](http://bioconductor.org/packages/PGA)*
-
-
-```{r install, eval = FALSE}
-# Install the development version from GitHub:
-if (!requireNamespace("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
-install.packages("remotes")
-BiocManager::install("PGA")
-```
-
-If you need the latest development version
+To install PGA:
 
 ```{r installgh, eval = FALSE}
 # Install the development version from GitHub:
