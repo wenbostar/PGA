@@ -1,6 +1,4 @@
 [![Build Status](https://travis-ci.org/wenbostar/PGA.svg?branch=master)](https://travis-ci.org/wenbostar/PGA) 
-[![HitCount](http://hits.dwyl.io/wenbostar/PGA.svg)](http://hits.dwyl.io/wenbostar/PGA)
-
 
 
 # `PGA`: a tool for ProteoGenomics Analysis
@@ -36,6 +34,13 @@ if (!requireNamespace("BiocManager", quietly = TRUE))
 install.packages("remotes")
 BiocManager::install("wenbostar/PGA")
 ```
+
+Use PGA in docker:
+
+```
+docker pull proteomics/pga
+```
+
 ## Citation
 
 To cite the `PGA` package in publications, please use:
