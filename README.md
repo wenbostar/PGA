@@ -34,9 +34,7 @@ BiocManager::install("wenbostar/PGA")
 
 Use PGA in docker:
 
-```
-docker pull proteomics/pga
-```
+Find detail at https://github.com/wenbostar/PGA/wiki/Use-PGA-docker.
 
 ## Citation
 
