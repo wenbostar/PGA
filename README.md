@@ -32,7 +32,7 @@ install.packages("remotes")
 BiocManager::install("wenbostar/PGA")
 ```
 
-Use PGA in docker:
+Use PGA in docker (recommended):
 
 Find detail at https://github.com/wenbostar/PGA/wiki/Use-PGA-docker.
 
