@@ -4,8 +4,20 @@
 [<img src="https://github.com/wenbostar/PGA/blob/gh-pages/images/PGA_pipeline.PNG" width=800 class="center">](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-016-1133-3)
 
 
-## Usage
+## Experimental procedure
 
+### For the impatient!
+- [x] Download the reference genome database from:http://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/
+- [x] GTF annotation file can be obtained from: http://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/genes/hg38.ncbiRefSeq.gtf.gz
+- Index your genome using tophat with `owtie2-build hg38.fasta tophatindex` where "tophatindex" is the index basename
+- [x] Map your reads the the reference genome and get the `accepted_hits.bam` file and the `junction.bed` file which is the first input file required by the PGA
+- [x] Run cufflinks to obtain the `transcript.gtf` file
+- [x] Use the GATK best practices to produce the `vcf` file
+You can then follow the tutorial below on how to generate the custome database and sequence searching using one of the search eingines specified above
+
+![RNAseq workflow](https://github.com/javanOkendo/PGA/blob/master/workflow.PNG)
+> Example of the RNAseq workflow which you can use for your data. It employs the use of GATK best practices
+---
 Please read this document to find how to use PGA: [PGA tutorial](http://bioconductor.org/packages/devel/bioc/vignettes/PGA/inst/doc/PGA.pdf). If you have any questions about PGA, please open an issue here: [open an issue](https://github.com/wenbostar/PGA/issues).
 
 Demo report of PGA output: [Demo report](http://wenbostar.github.io/PGA/report/index.html).
